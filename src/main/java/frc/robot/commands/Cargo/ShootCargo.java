@@ -45,18 +45,18 @@ public class ShootCargo extends CommandBase {
     outputBottom = prefTransfer.transferBeltSpeed;
     outputTop = prefTransfer.transferBeltSpeed;
 
-    if (!subShooter.isMotorAtSpeed()) {
+    // if (!subShooter.isMotorAtSpeed()) {
 
-      if (subTransfer.isTopBallCollected()) {
-        outputTop = RobotPreferences.zeroDoublePref;
+    // if (subTransfer.isTopBallCollected()) {
+    // outputTop = RobotPreferences.zeroDoublePref;
 
-        if (subTransfer.isBottomBallCollected()) {
+    // if (subTransfer.isBottomBallCollected()) {
 
-          outputEntrance = RobotPreferences.zeroDoublePref;
-          outputBottom = RobotPreferences.zeroDoublePref;
-        }
-      }
-    }
+    // outputEntrance = RobotPreferences.zeroDoublePref;
+    // outputBottom = RobotPreferences.zeroDoublePref;
+    // }
+    // }
+    // }
 
     subTransfer.setEntranceWheelSpeed(outputEntrance);
     subTransfer.setBottomBeltSpeed(outputBottom);
