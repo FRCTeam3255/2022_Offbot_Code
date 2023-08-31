@@ -5,7 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.frcteam3255.components.SN_DoubleSolenoid;
 import com.frcteam3255.preferences.SN_DoublePreference;
 
@@ -17,14 +17,14 @@ import frc.robot.RobotMap.mapIntake;
 
 public class Intake extends SubsystemBase {
 
-  TalonFX roller;
+  TalonSRX roller;
   SN_DoubleSolenoid deploy;
 
   boolean displayOnDashboard;
 
   public Intake() {
 
-    roller = new TalonFX(mapIntake.INTAKE_MOTOR_CAN);
+    roller = new TalonSRX(mapIntake.INTAKE_MOTOR_CAN);
     deploy = new SN_DoubleSolenoid(
         PneumaticsModuleType.CTREPCM, mapIntake.INTAKE_SOLENOID_PCM_FORWARD, mapIntake.INTAKE_SOLENOID_PCM_REVERSE);
 
