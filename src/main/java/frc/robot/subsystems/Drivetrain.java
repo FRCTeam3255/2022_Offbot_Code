@@ -8,8 +8,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 import com.kauailabs.navx.frc.AHRS;
@@ -31,17 +31,17 @@ import frc.robot.RobotPreferences.prefDrivetrain;
 
 public class Drivetrain extends SubsystemBase {
 
-  TalonFX leftLead;
-  TalonFX leftFollow;
-  TalonFX rightLead;
-  TalonFX rightFollow;
+  TalonSRX leftLead;
+  TalonSRX leftFollow;
+  TalonSRX rightLead;
+  TalonSRX rightFollow;
 
   AHRS navx;
 
   DifferentialDriveOdometry odometry;
   Field2d field = new Field2d();
 
-  TalonFXConfiguration config;
+  TalonSRXConfiguration config;
 
   double arcadeDriveSpeedMultiplier;
   double arcadeDriveTurnMultiplier;
@@ -61,10 +61,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
 
-    leftLead = new TalonFX(mapDrivetrain.LEFT_LEAD_MOTOR_CAN);
-    leftFollow = new TalonFX(mapDrivetrain.LEFT_FOLLOW_MOTOR_CAN);
-    rightLead = new TalonFX(mapDrivetrain.RIGHT_LEAD_MOTOR_CAN);
-    rightFollow = new TalonFX(mapDrivetrain.RIGHT_FOLLOW_MOTOR_CAN);
+    leftLead = new TalonSRX(mapDrivetrain.LEFT_LEAD_MOTOR_CAN);
+    leftFollow = new TalonSRX(mapDrivetrain.LEFT_FOLLOW_MOTOR_CAN);
+    rightLead = new TalonSRX(mapDrivetrain.RIGHT_LEAD_MOTOR_CAN);
+    rightFollow = new TalonSRX(mapDrivetrain.RIGHT_FOLLOW_MOTOR_CAN);
 
     navx = new AHRS();
 
@@ -76,7 +76,7 @@ public class Drivetrain extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(navx.getRotation2d());
     field = new Field2d();
 
-    config = new TalonFXConfiguration();
+    config = new TalonSRXConfiguration();
 
     configure();
     loadTrajectories();
