@@ -141,9 +141,9 @@ public class RobotContainer {
 
     // Climbing
     conDriver.btn_A
-        .whenPressed(() -> subClimber.setAngled());
+        // .whenPressed(() -> subClimber.setAngled());
 
-    conDriver.btn_B
+        // conDriver.btn_B
         .whenPressed(() -> subClimber.setPerpendicular());
 
     // Prep Climb
