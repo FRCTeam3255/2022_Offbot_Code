@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,17 +21,21 @@ import frc.robot.RobotPreferences.prefHood;
 
 public class Hood extends SubsystemBase {
 
-  TalonFX hoodMotor;
+  CANSparkMax hoodMotor;
   DigitalInput bottomSwitch;
-  TalonFXConfiguration config;
+  SparkPIDController hoodPIDController;
 
   boolean displayOnDashboard;
 
   public Hood() {
 
-    hoodMotor = new TalonFX(mapHood.HOOD_MOTOR_CAN);
+    hoodMotor = new CANSparkMax(mapHood.HOOD_MOTOR_CAN, MotorType.kBrushless);
     bottomSwitch = new DigitalInput(mapHood.HOOD_BOTTOM_SWITCH_DIO);
-    config = new TalonFXConfiguration();
+    hoodPIDController = hoodMotor.getPIDController();
+
+    hoodPIDController.setP(prefHood.hoodP.getValue());
+    hoodPIDController.setI(prefHood.hoodI.getValue());
+    hoodPIDController.setD(prefHood.hoodD.getValue());
 
     displayOnDashboard = true;
 
@@ -40,42 +43,29 @@ public class Hood extends SubsystemBase {
   }
 
   public void configure() {
-    hoodMotor.configFactoryDefault();
-
-    config.slot0.kP = prefHood.hoodP.getValue();
-    config.slot0.kI = prefHood.hoodI.getValue();
-    config.slot0.kD = prefHood.hoodD.getValue();
-
-    config.slot0.allowableClosedloopError = SN_Math
-        .degreesToFalcon(prefHood.hoodAllowableClosedLoopErrorDegrees.getValue(), constHood.GEAR_RATIO);
-
-    config.slot0.closedLoopPeakOutput = prefHood.hoodClosedLoopPeakOutput.getValue();
-
-    hoodMotor.configAllSettings(config);
+    hoodMotor.restoreFactoryDefaults();
 
     hoodMotor.setInverted(constHood.INVERTED);
-    hoodMotor.setNeutralMode(NeutralMode.Coast);
+    hoodMotor.setIdleMode(IdleMode.kCoast);
 
-    hoodMotor.configForwardSoftLimitEnable(true);
-    hoodMotor.configForwardSoftLimitThreshold(
-        SN_Math.degreesToFalcon(prefHood.hoodMaxDegrees.getValue(), constHood.GEAR_RATIO));
-    hoodMotor.configReverseSoftLimitEnable(true);
-    hoodMotor.configReverseSoftLimitThreshold(
-        SN_Math.degreesToFalcon(prefHood.hoodMinDegrees.getValue(), constHood.GEAR_RATIO));
+    hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    hoodMotor.setSoftLimit(SoftLimitDirection.kForward, ((float) prefHood.hoodMaxDegrees.getValue()) / 360);
+
+    hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    hoodMotor.setSoftLimit(SoftLimitDirection.kReverse, ((float) prefHood.hoodMinDegrees.getValue()) / 360);
 
     resetAngleToBottom();
   }
 
   public double getAngleDegrees() {
-    return SN_Math.falconToDegrees(hoodMotor.getSelectedSensorPosition(), constHood.GEAR_RATIO);
+    return (hoodMotor.getEncoder().getPosition()) * 360;
   }
 
   public void setAngle(double a_degrees) {
 
     double degrees = MathUtil.clamp(a_degrees, prefHood.hoodMinDegrees.getValue(), prefHood.hoodMaxDegrees.getValue());
 
-    hoodMotor.set(ControlMode.Position, SN_Math.degreesToFalcon(degrees, constHood.GEAR_RATIO),
-        DemandType.ArbitraryFeedForward, prefHood.hoodArbitraryFeedForward.getValue());
+    hoodPIDController.setReference((degrees / 360), CANSparkMax.ControlType.kPosition);
   }
 
   public void setAngle(SN_DoublePreference degrees) {
@@ -87,12 +77,11 @@ public class Hood extends SubsystemBase {
   }
 
   public void resetAngleToBottom() {
-    hoodMotor.setSelectedSensorPosition(
-        SN_Math.degreesToFalcon(prefHood.hoodMinDegrees.getValue(), constHood.GEAR_RATIO));
+    hoodMotor.getEncoder().setPosition((prefHood.hoodMinDegrees.getValue()) / 360);
   }
 
   public void neutralOutput() {
-    hoodMotor.neutralOutput();
+    hoodMotor.set(0);
   }
 
   public void displayValuesOnDashboard() {
