@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,15 +20,15 @@ import frc.robot.RobotPreferences.prefTurret;
 
 public class Turret extends SubsystemBase {
 
-  TalonFX turretMotor;
-  TalonFXConfiguration config;
+  CANSparkMax turretMotor;
+  SparkPIDController turretPIDController;
 
   boolean displayOnDashboard;
 
   public Turret() {
 
-    turretMotor = new TalonFX(mapTurret.TURRET_MOTOR_CAN);
-    config = new TalonFXConfiguration();
+    turretMotor = new CANSparkMax(mapTurret.TURRET_MOTOR_CAN, MotorType.kBrushless);
+    turretPIDController = turretMotor.getPIDController();
 
     displayOnDashboard = true;
 
@@ -36,28 +36,22 @@ public class Turret extends SubsystemBase {
   }
 
   public void configure() {
-    config.slot0.kP = prefTurret.turretP.getValue();
-    config.slot0.kI = prefTurret.turretI.getValue();
-    config.slot0.kD = prefTurret.turretD.getValue();
 
-    config.slot0.allowableClosedloopError = SN_Math
-        .degreesToFalcon(prefTurret.turretAllowableClosedloopErrorDegrees.getValue(), constTurret.GEAR_RATIO);
-    config.slot0.closedLoopPeakOutput = prefTurret.turretClosedLoopPeakOutput.getValue();
+    turretPIDController.setP(prefTurret.turretP.getValue());
+    turretPIDController.setI(prefTurret.turretI.getValue());
+    turretPIDController.setD(prefTurret.turretD.getValue());
 
-    turretMotor.configFactoryDefault();
-
-    turretMotor.configAllSettings(config);
+    turretMotor.restoreFactoryDefaults();
 
     turretMotor.setInverted(constTurret.INVERTED);
 
-    turretMotor.configForwardSoftLimitEnable(true);
-    turretMotor.configForwardSoftLimitThreshold(
-        SN_Math.degreesToFalcon(prefTurret.turretMaxDegrees.getValue(), constTurret.GEAR_RATIO));
-    turretMotor.configReverseSoftLimitEnable(true);
-    turretMotor.configReverseSoftLimitThreshold(
-        SN_Math.degreesToFalcon(prefTurret.turretMinDegrees.getValue(), constTurret.GEAR_RATIO));
+    turretMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    turretMotor.setSoftLimit(SoftLimitDirection.kForward, ((float) prefTurret.turretMaxDegrees.getValue()) / 360);
 
-    turretMotor.setNeutralMode(NeutralMode.Brake);
+    turretMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    turretMotor.setSoftLimit(SoftLimitDirection.kReverse, ((float) prefTurret.turretMinDegrees.getValue()) / 360);
+
+    turretMotor.setIdleMode(IdleMode.kBrake);
   }
 
   /**
@@ -67,8 +61,7 @@ public class Turret extends SubsystemBase {
    */
   public void setAngle(double degrees) {
     double position = SN_Math.degreesToFalcon(degrees, constTurret.GEAR_RATIO);
-    turretMotor.set(ControlMode.Position, position, DemandType.ArbitraryFeedForward,
-        prefTurret.turretArbitraryFeedForward.getValue());
+    turretPIDController.setReference((position / 360), CANSparkMax.ControlType.kPosition);
   }
 
   /**
@@ -86,16 +79,15 @@ public class Turret extends SubsystemBase {
    * @return Turret angle in degrees
    */
   public double getAngle() {
-    return SN_Math.falconToDegrees(turretMotor.getSelectedSensorPosition(), constTurret.GEAR_RATIO);
+    return (turretMotor.getEncoder().getPosition()) * 360;
   }
 
   public void setSpeed(double speed) {
-    turretMotor.set(ControlMode.PercentOutput, speed);
+    turretMotor.set(speed);
   }
 
   public void resetEncoderCounts() {
-    turretMotor.setSelectedSensorPosition(
-        SN_Math.degreesToFalcon(prefTurret.turretFacingTowardsIntakeDegrees.getValue(), constTurret.GEAR_RATIO));
+    turretMotor.getEncoder().setPosition((prefTurret.turretFacingTowardsIntakeDegrees.getValue()) / 360);
   }
 
   public void displayValuesOnDashboard() {
@@ -112,8 +104,6 @@ public class Turret extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Turret Angle Degrees", getAngle());
-      SmartDashboard.putNumber("Turret Motor Speed", turretMotor.getMotorOutputPercent());
-
     }
 
   }
