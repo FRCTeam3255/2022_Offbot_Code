@@ -6,7 +6,7 @@ package frc.robot.commands.Cargo;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.RobotPreferences;
 import frc.robot.Constants.CargoState;
@@ -15,7 +15,7 @@ import frc.robot.RobotPreferences.prefTransfer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Transfer;
 
-public class CollectCargo extends CommandBase {
+public class CollectCargo extends Command {
 
   Intake subIntake;
   Transfer subTransfer;

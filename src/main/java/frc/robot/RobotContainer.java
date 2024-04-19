@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants.AimState;
@@ -24,12 +25,6 @@ import frc.robot.RobotMap.mapControllers;
 import frc.robot.RobotPreferences.prefDrivetrain;
 import frc.robot.RobotPreferences.prefPreset;
 import frc.robot.RobotPreferences.prefTurret;
-import frc.robot.commands.Auto.Defense;
-import frc.robot.commands.Auto.F1toB1;
-import frc.robot.commands.Auto.FiveBallA;
-import frc.robot.commands.Auto.FourBallA;
-import frc.robot.commands.Auto.T3toTaxi;
-import frc.robot.commands.Auto.TestAuto;
 import frc.robot.commands.Cargo.CollectCargo;
 import frc.robot.commands.Cargo.DiscardCargo;
 import frc.robot.commands.Cargo.ShootCargo;
@@ -65,7 +60,6 @@ public class RobotContainer {
   private final Transfer subTransfer = new Transfer();
   private final Turret subTurret = new Turret();
   private final Climber subClimber = new Climber();
-  private final Vision subVision = new Vision();
 
   // Commands
   private final ShootCargo comShootCargo = new ShootCargo(subShooter, subTransfer);
@@ -73,38 +67,7 @@ public class RobotContainer {
   private final DiscardCargo comDiscardCargo = new DiscardCargo(subIntake, subTransfer);
 
   private final MoveTurret comMoveTurret = new MoveTurret(subTurret, conOperator);
-  private final VisionAimTurret comVisionAimTurret = new VisionAimTurret(subTurret, subVision);
-  private final OdometryAimTurret comOdometryAimTurret = new OdometryAimTurret(subTurret, subDrivetrain);
-
-  private final VisionSetShooter comVisionSetShooter = new VisionSetShooter(subShooter, subHood, subVision, subTurret);
-  private final OdometrySetShooter comOdometrySetShooter = new OdometrySetShooter(subDrivetrain, subShooter, subHood);
-
-  private final MoveClimber comMoveClimber = new MoveClimber(subClimber, subTurret, conDriver, conSwitchboard);
-  // Autos
-  private final FourBallA autoFourBallA = new FourBallA(
-      subDrivetrain,
-      subShooter,
-      subTurret,
-      subHood,
-      subTransfer,
-      subIntake);
-
-  private final Defense autoDefence = new Defense(
-      subDrivetrain,
-      subIntake,
-      subTransfer,
-      subShooter,
-      subTurret,
-      subHood);
-
-  private final TestAuto testAuto = new TestAuto(subDrivetrain);
-  private final F1toB1 autoF1toB1 = new F1toB1(subDrivetrain, subIntake, subTransfer, subShooter, subTurret, subHood);
-  private final T3toTaxi autoT3toTaxi = new T3toTaxi(subDrivetrain, subIntake, subTransfer, subShooter, subTurret,
-      subHood);
-  private final FiveBallA autoFiveBall = new FiveBallA(subDrivetrain, subIntake, subTransfer, subShooter, subTurret,
-      subHood);
-
-  SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final MoveClimber comMoveClimber = new MoveClimber(subClimber, subTurret, conDriver);
 
   public static CargoState cargoState;
   public static AimState aimState;
@@ -124,7 +87,6 @@ public class RobotContainer {
 
     configureButtonBindings();
     configureDashboardButtons();
-    configureAutoSelector();
   }
 
   private void configureButtonBindings() {
@@ -133,8 +95,9 @@ public class RobotContainer {
 
     // Driving
     conDriver.btn_LBump
-        .whenPressed(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedLow))
-        .whenReleased(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid));
+        .onTrue(Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedLow)))
+        .onFalse(
+            Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid)));
     conDriver.btn_RBump
         .whenPressed(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedHigh))
         .whenReleased(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid));
@@ -180,14 +143,6 @@ public class RobotContainer {
     conOperator.btn_LStick.whenPressed(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees));
     conOperator.btn_RStick.whenPressed(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees));
 
-    conOperator.btn_X
-        .and(conSwitchboard.btn_1)
-        .whileActiveContinuous(comVisionSetShooter);
-
-    conOperator.btn_X
-        .and(conSwitchboard.btn_3)
-        .whileActiveContinuous(comVisionAimTurret);
-
     // Intake
     conOperator.btn_LTrig.whileHeld(comCollectCargo);
     conOperator.btn_B.whileHeld(comDiscardCargo);
@@ -205,17 +160,6 @@ public class RobotContainer {
     conOperator.POV_West
         .whenPressed(() -> subShooter.setGoalRPM(prefPreset.presetTarmacShooterRPM))
         .whenPressed(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees));
-
-    conSwitchboard.btn_2.whileHeld(comOdometrySetShooter);
-    conSwitchboard.btn_4.whileHeld(comOdometryAimTurret);
-    conSwitchboard.btn_5.whileHeld(() -> subTurret.resetEncoderCounts());
-
-    conSwitchboard.btn_8.whileHeld(() -> subDrivetrain.resetPose(
-        subVision.calculatePoseFromVision(subVision.getDistanceFromHub(),
-            subDrivetrain.getPose().getRotation().getRadians(),
-            Rotation2d.fromDegrees(subTurret.getAngle()).getRadians(),
-            Rotation2d.fromDegrees(-subVision.limelight.getOffsetX()).getRadians())));
-
   }
 
   public void useSwitchboardButtons() {
@@ -268,25 +212,6 @@ public class RobotContainer {
         "Configure Transfer", new SN_InstantCommand(subTransfer::configure, true, subTransfer));
     SmartDashboard.putData(
         "Configure Turret", new SN_InstantCommand(subTurret::configure, true, subTurret));
-  }
-
-  private void configureAutoSelector() {
-    autoChooser.setDefaultOption("null", null);
-    autoChooser.addOption("Four Ball A", autoFourBallA);
-    autoChooser.addOption("Defense", autoDefence);
-    autoChooser.addOption("Test", testAuto);
-    autoChooser.addOption("F1toB1", autoF1toB1);
-    autoChooser.addOption("T3toTaxi", autoT3toTaxi);
-    autoChooser.addOption("Five Ball", autoFiveBall);
-    autoChooser.addOption("LEFT_FENDER_POSITION_FRONT",
-        new InstantCommand(() -> subDrivetrain.resetPose(constField.LEFT_FENDER_POSITION_FRONT)));
-    autoChooser.addOption("LEFT_FENDER_POSITION_BACK",
-        new InstantCommand(() -> subDrivetrain.resetPose(constField.LEFT_FENDER_POSITION_BACK)));
-    autoChooser.addOption("RIGHT_FENDER_POSITION_FRONT",
-        new InstantCommand(() -> subDrivetrain.resetPose(constField.RIGHT_FENDER_POSITION_FRONT)));
-    autoChooser.addOption("RIGHT_FENDER_POSITION_BACK",
-        new InstantCommand(() -> subDrivetrain.resetPose(constField.RIGHT_FENDER_POSITION_BACK)));
-    SmartDashboard.putData(autoChooser);
   }
 
   public Command getAutonomousCommand() {

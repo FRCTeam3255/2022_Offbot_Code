@@ -7,12 +7,12 @@ package frc.robot.commands.Climber;
 import com.frcteam3255.joystick.SN_F310Gamepad;
 import com.frcteam3255.joystick.SN_SwitchboardStick;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotPreferences.prefTurret;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Turret;
 
-public class MoveClimber extends CommandBase {
+public class MoveClimber extends Command {
 
   Climber subClimber;
   Turret subTurret;
@@ -42,9 +42,9 @@ public class MoveClimber extends CommandBase {
 
     speed = conDriver.getAxisRT() - conDriver.getAxisLT();
 
-    if (!conSwitchboard.btn_6.get()) {
-      speed *= subTurret.getAngle() <= prefTurret.turretClimberThreshold.getValue() ? 1 : 0;
-    }
+    // if (!conSwitchboard.btn_6.get()) {
+    //   speed *= subTurret.getAngle() <= prefTurret.turretClimberThreshold.getValue() ? 1 : 0;
+    // } this code scares me
 
     subClimber.setClimberSpeed(speed);
 

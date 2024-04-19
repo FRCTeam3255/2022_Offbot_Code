@@ -38,7 +38,6 @@ public class Drivetrain extends SubsystemBase {
 
   AHRS navx;
 
-  DifferentialDriveOdometry odometry;
   Field2d field = new Field2d();
 
   TalonFXConfiguration config;
@@ -73,7 +72,6 @@ public class Drivetrain extends SubsystemBase {
 
     displayOnDashboard = true;
 
-    odometry = new DifferentialDriveOdometry(navx.getRotation2d());
     field = new Field2d();
 
     config = new TalonFXConfiguration();
@@ -153,12 +151,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose) {
-    odometry.resetPosition(pose, navx.getRotation2d());
     resetEncoderCounts();
   }
 
   public void updatePose() {
-    odometry.update(navx.getRotation2d(), getLeftMeters(), getRightMeters());
     field.setRobotPose(getPose());
   }
 
