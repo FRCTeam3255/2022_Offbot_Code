@@ -6,11 +6,9 @@ package frc.robot;
 
 import com.frcteam3255.joystick.SN_DualActionStick;
 import com.frcteam3255.joystick.SN_F310Gamepad;
-import com.frcteam3255.preferences.SN_Preferences;
 import com.frcteam3255.utils.SN_InstantCommand;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,11 +26,7 @@ import frc.robot.commands.Cargo.CollectCargo;
 import frc.robot.commands.Cargo.DiscardCargo;
 import frc.robot.commands.Cargo.ShootCargo;
 import frc.robot.commands.Climber.MoveClimber;
-import frc.robot.commands.Shooter.OdometrySetShooter;
-import frc.robot.commands.Shooter.VisionSetShooter;
 import frc.robot.commands.Turret.MoveTurret;
-import frc.robot.commands.Turret.OdometryAimTurret;
-import frc.robot.commands.Turret.VisionAimTurret;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hood;
@@ -40,7 +34,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
 
@@ -66,6 +59,8 @@ public class RobotContainer {
 
   private final MoveTurret comMoveTurret = new MoveTurret(subTurret, conOperator);
   private final MoveClimber comMoveClimber = new MoveClimber(subClimber, subTurret, conDriver);
+
+  SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   public static CargoState cargoState;
   public static AimState aimState;
@@ -97,67 +92,71 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid)));
     conDriver.btn_RBump
-        .whenPressed(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedHigh))
-        .whenReleased(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid));
+        .onTrue(
+            Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedHigh)))
+        .onFalse(
+            Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid)));
 
     // Climbing
     conDriver.btn_A
-        .whenPressed(() -> subClimber.setAngled());
+        .onTrue(Commands.runOnce(() -> subClimber.setAngled()));
 
     conDriver.btn_B
-        .whenPressed(() -> subClimber.setPerpendicular());
+        .onTrue(Commands.runOnce(() -> subClimber.setPerpendicular()));
 
     // Prep Climb
     conDriver.btn_Back
-        .whenPressed(() -> subShooter.neutralOutput())
-        .whenPressed(() -> subTurret.setAngle(prefTurret.turretMinDegrees))
-        .whenPressed(() -> subHood.neutralOutput());
+        .onTrue(Commands.runOnce(() -> subShooter.neutralOutput()))
+        .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretMinDegrees)))
+        .onTrue(Commands.runOnce(() -> subHood.neutralOutput()));
 
     // Pose resetting
-    conDriver.POV_North.whenPressed(
+    conDriver.POV_North.onTrue(Commands.runOnce(
         () -> subDrivetrain
-            .resetPose(constField.LEFT_FENDER_POSITION_FRONT));
-    conDriver.POV_South.whenPressed(
+            .resetPose(constField.LEFT_FENDER_POSITION_FRONT)));
+    conDriver.POV_South.onTrue(Commands.runOnce(
         () -> subDrivetrain
-            .resetPose(constField.LEFT_FENDER_POSITION_BACK));
-    conDriver.POV_West.whenPressed(
+            .resetPose(constField.LEFT_FENDER_POSITION_BACK)));
+    conDriver.POV_West.onTrue(Commands.runOnce(
         () -> subDrivetrain
-            .resetPose(constField.RIGHT_FENDER_POSITION_FRONT));
-    conDriver.POV_East.whenPressed(
+            .resetPose(constField.RIGHT_FENDER_POSITION_FRONT)));
+    conDriver.POV_East.onTrue(Commands.runOnce(
         () -> subDrivetrain
-            .resetPose(constField.RIGHT_FENDER_POSITION_BACK));
+            .resetPose(constField.RIGHT_FENDER_POSITION_BACK)));
 
     // Operator Commands
 
     // Shooting
     conOperator.btn_RTrig
-        .whileHeld(comShootCargo);
+        .whileTrue(comShootCargo);
 
-    conOperator.btn_RBump.whenPressed(new RunCommand(() -> subShooter.setMotorRPMToGoalRPM(), subShooter));
-    conOperator.btn_Start.whenPressed(new InstantCommand(() -> subShooter.neutralOutput(), subShooter));
+    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorRPMToGoalRPM(), subShooter));
+    conOperator.btn_Start.onTrue(new InstantCommand(() -> subShooter.neutralOutput(), subShooter));
 
     // Turret
-    conOperator.btn_LBump.whileHeld(comMoveTurret);
-    conOperator.btn_LStick.whenPressed(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees));
-    conOperator.btn_RStick.whenPressed(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees));
+    conOperator.btn_LBump.whileTrue(comMoveTurret);
+    conOperator.btn_LStick.onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees)));
+    conOperator.btn_RStick.onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
 
+        
     // Intake
-    conOperator.btn_LTrig.whileHeld(comCollectCargo);
-    conOperator.btn_B.whileHeld(comDiscardCargo);
-    conOperator.btn_Back.whenPressed(() -> subIntake.setRetracted());
+        
+    conOperator.btn_LTrig.whileTrue(comCollectCargo);
+    conOperator.btn_B.whileTrue(comDiscardCargo);
+    conOperator.btn_Back.onTrue(Commands.runOnce(() -> subIntake.setRetracted()));
 
     // Presets
     conOperator.POV_North
-        .whenPressed(() -> subShooter.setGoalRPM(prefPreset.presetFenderShooterRPM))
-        .whenPressed(() -> subHood.setAngle(prefPreset.presetFenderHoodDegrees));
+        .onTrue(Commands.runOnce(() -> subShooter.setGoalRPM(prefPreset.presetFenderShooterRPM)))
+        .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetFenderHoodDegrees)));
 
     conOperator.POV_South
-        .whenPressed(() -> subShooter.setGoalRPM(prefPreset.presetLaunchpadShooterRPM))
-        .whenPressed(() -> subHood.setAngle(prefPreset.presetLaunchpadHoodDegrees));
+        .onTrue(Commands.runOnce(() -> subShooter.setGoalRPM(prefPreset.presetLaunchpadShooterRPM)))
+        .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetLaunchpadHoodDegrees)));
 
     conOperator.POV_West
-        .whenPressed(() -> subShooter.setGoalRPM(prefPreset.presetTarmacShooterRPM))
-        .whenPressed(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees));
+        .onTrue(Commands.runOnce(() -> subShooter.setGoalRPM(prefPreset.presetTarmacShooterRPM)))
+        .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees)));
   }
 
   private void configureDashboardButtons() {
