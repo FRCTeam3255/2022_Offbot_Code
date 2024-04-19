@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.frcteam3255.joystick.SN_DualActionStick;
 import com.frcteam3255.joystick.SN_F310Gamepad;
-import com.frcteam3255.joystick.SN_SwitchboardStick;
 import com.frcteam3255.preferences.SN_Preferences;
 import com.frcteam3255.utils.SN_InstantCommand;
 
@@ -50,7 +49,6 @@ public class RobotContainer {
   private final SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(
       prefDrivetrain.driveSlewRateLimit.getValue());
   private final SN_DualActionStick conOperator = new SN_DualActionStick(mapControllers.OPERATOR_CONTROLLER);
-  private final SN_SwitchboardStick conSwitchboard = new SN_SwitchboardStick(mapControllers.SWITCHBOARD);
 
   // Subsystems
   private final Drivetrain subDrivetrain = new Drivetrain();
@@ -160,40 +158,6 @@ public class RobotContainer {
     conOperator.POV_West
         .whenPressed(() -> subShooter.setGoalRPM(prefPreset.presetTarmacShooterRPM))
         .whenPressed(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees));
-  }
-
-  public void useSwitchboardButtons() {
-
-    // btn_1 -> Vision Aim Y
-    // btn_2 -> Odometry Aim Y
-    // btn_3 -> Vision Aim X
-    // btn_4 -> Odometry Aim X
-    // btn_5 -> Reset turret encoder counts
-    // btn_6 -> Override Climber Safety
-
-    // btn_9 -> Use Hardcoded or Default Preference Values
-    if (conSwitchboard.btn_9.get()) {
-      SN_Preferences.usePreferences();
-    } else {
-      SN_Preferences.useDefaults();
-    }
-
-    // btn_10 -> Don't Send Values to SmartDashboard
-    if (!conSwitchboard.btn_10.get()) {
-      subDrivetrain.displayValuesOnDashboard();
-      subHood.displayValuesOnDashboard();
-      subIntake.displayValuesOnDashboard();
-      subShooter.displayValuesOnDashboard();
-      subTransfer.displayValuesOnDashboard();
-      subTurret.displayValuesOnDashboard();
-    } else {
-      subDrivetrain.hideValuesOnDashboard();
-      subHood.hideValuesOnDashboard();
-      subIntake.hideValuesOnDashboard();
-      subShooter.hideValuesOnDashboard();
-      subTransfer.hideValuesOnDashboard();
-      subTurret.hideValuesOnDashboard();
-    }
   }
 
   private void configureDashboardButtons() {
