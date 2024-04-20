@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -60,8 +59,8 @@ public class Turret extends SubsystemBase {
    * @param degrees Degree count to set turret to
    */
   public void setAngle(double degrees) {
-    double position = SN_Math.degreesToFalcon(degrees, constTurret.GEAR_RATIO);
-    turretPIDController.setReference((position / 360), CANSparkMax.ControlType.kPosition);
+    turretPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
+    // TODO: I don't know if the degrees are still accurate o.O so it might explode
   }
 
   /**

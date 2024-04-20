@@ -33,10 +33,6 @@ public class Hood extends SubsystemBase {
     bottomSwitch = new DigitalInput(mapHood.HOOD_BOTTOM_SWITCH_DIO);
     hoodPIDController = hoodMotor.getPIDController();
 
-    hoodPIDController.setP(prefHood.hoodP.getValue());
-    hoodPIDController.setI(prefHood.hoodI.getValue());
-    hoodPIDController.setD(prefHood.hoodD.getValue());
-
     displayOnDashboard = true;
 
     configure();
@@ -44,6 +40,10 @@ public class Hood extends SubsystemBase {
 
   public void configure() {
     hoodMotor.restoreFactoryDefaults();
+
+    hoodPIDController.setP(prefHood.hoodP.getValue());
+    hoodPIDController.setI(prefHood.hoodI.getValue());
+    hoodPIDController.setD(prefHood.hoodD.getValue());
 
     hoodMotor.setInverted(constHood.INVERTED);
     hoodMotor.setIdleMode(IdleMode.kCoast);
