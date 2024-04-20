@@ -8,6 +8,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.frcteam3255.components.SN_DoubleSolenoid;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
@@ -15,7 +17,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -28,7 +29,6 @@ import frc.robot.RobotPreferences.prefClimber;
 public class Climber extends SubsystemBase {
 
   CANSparkMax climberMotor;
-  SN_DoubleSolenoid pivotPiston;
 
   DigitalInput minSwitch;
   DigitalInput maxSwitch;
@@ -41,8 +41,7 @@ public class Climber extends SubsystemBase {
     minSwitch = new DigitalInput(mapClimber.CLIMBER_MINIMUM_SWITCH_DIO);
     maxSwitch = new DigitalInput(mapClimber.CLIMBER_MAXIMUM_SWITCH_DIO);
 
-    pivotPiston = new SN_DoubleSolenoid(PneumaticsModuleType.CTREPCM,
-        mapClimber.PIVOT_PISTON_SOLENOID_PCM_A, mapClimber.PIVOT_PISTON_SOLENOID_PCM_B);
+    configure();
 
     displayOnDashboard = true;
 
@@ -125,23 +124,8 @@ public class Climber extends SubsystemBase {
   // climberMotor.setSelectedSensorPosition(0);
   // }
 
-  public void setPerpendicular() {
-    pivotPiston.setRetracted();
-  };
-
-  // public void setAngled() {
-  // if (getClimberEncoderCounts() > prefClimber.climberAngledMinPos.getValue()) {
-  // pivotPiston.setDeployed();
-  // }
-
-  // };
-
   public void neutralMotorOutput() {
     climberMotor.set(0);
-  }
-
-  public boolean isAngled() {
-    return pivotPiston.isDeployed();
   }
 
   public boolean isMaxSwitch() {

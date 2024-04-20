@@ -5,28 +5,23 @@
 package frc.robot.commands.Climber;
 
 import com.frcteam3255.joystick.SN_F310Gamepad;
-import com.frcteam3255.joystick.SN_SwitchboardStick;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotPreferences.prefTurret;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Turret;
 
-public class MoveClimber extends CommandBase {
+public class MoveClimber extends Command {
 
   Climber subClimber;
   Turret subTurret;
   SN_F310Gamepad conDriver;
-  SN_SwitchboardStick conSwitchboard;
 
   double speed;
 
-  public MoveClimber(Climber subClimber, Turret subTurret, SN_F310Gamepad conDriver,
-      SN_SwitchboardStick conSwitchboard) {
+  public MoveClimber(Climber subClimber, Turret subTurret, SN_F310Gamepad conDriver) {
     this.subClimber = subClimber;
     this.subTurret = subTurret;
     this.conDriver = conDriver;
-    this.conSwitchboard = conSwitchboard;
 
     speed = 0;
 
@@ -41,10 +36,6 @@ public class MoveClimber extends CommandBase {
   public void execute() {
 
     speed = conDriver.getAxisRT() - conDriver.getAxisLT();
-
-    if (!conSwitchboard.btn_6.get()) {
-      speed *= subTurret.getAngle() <= prefTurret.turretClimberThreshold.getValue() ? 1 : 0;
-    }
 
     subClimber.setClimberSpeed(speed);
 

@@ -6,7 +6,7 @@ package frc.robot.commands.Cargo;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.RobotPreferences;
 import frc.robot.Constants.CargoState;
@@ -14,7 +14,7 @@ import frc.robot.RobotPreferences.prefTransfer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Transfer;
 
-public class ShootCargo extends CommandBase {
+public class ShootCargo extends Command {
 
   Shooter subShooter;
   Transfer subTransfer;

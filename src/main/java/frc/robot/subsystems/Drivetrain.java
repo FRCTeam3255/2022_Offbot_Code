@@ -14,23 +14,18 @@ import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constDrivetrain;
-import frc.robot.Constants.constField;
 import frc.robot.RobotMap.mapDrivetrain;
 import frc.robot.RobotPreferences.prefDrivetrain;
 
 public class Drivetrain extends SubsystemBase {
-
   TalonFX leftLead;
   TalonFX leftFollow;
   TalonFX rightLead;
@@ -38,7 +33,6 @@ public class Drivetrain extends SubsystemBase {
 
   AHRS navx;
 
-  DifferentialDriveOdometry odometry;
   Field2d field = new Field2d();
 
   TalonFXConfiguration config;
@@ -73,7 +67,6 @@ public class Drivetrain extends SubsystemBase {
 
     displayOnDashboard = true;
 
-    odometry = new DifferentialDriveOdometry(navx.getRotation2d());
     field = new Field2d();
 
     config = new TalonFXConfiguration();
@@ -148,36 +141,12 @@ public class Drivetrain extends SubsystemBase {
         constDrivetrain.GEAR_RATIO);
   }
 
-  public Pose2d getPose() {
-    return odometry.getPoseMeters();
-  }
-
   public void resetPose(Pose2d pose) {
-    odometry.resetPosition(pose, navx.getRotation2d());
     resetEncoderCounts();
-  }
-
-  public void updatePose() {
-    odometry.update(navx.getRotation2d(), getLeftMeters(), getRightMeters());
-    field.setRobotPose(getPose());
   }
 
   public void setArcadeDriveSpeedMultiplier(SN_DoublePreference multiplier) {
     arcadeDriveSpeedMultiplier = multiplier.getValue();
-  }
-
-  /**
-   * @return Distance from hub in meters
-   */
-  public double getDistanceFromHub() {
-
-    Pose2d robotPose = getPose();
-
-    double base = constField.HUB_POSITION.getX() - robotPose.getX();
-    double height = constField.HUB_POSITION.getY() - robotPose.getY();
-
-    double distanceToHub = Math.sqrt(Math.pow(base, 2) + Math.pow(height, 2));
-    return distanceToHub;
   }
 
   public void setArcadeDriveTurnMultiplier(SN_DoublePreference multiplier) {
@@ -270,17 +239,6 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  public RamseteCommand getRamseteCommand(Trajectory tarmacToBallTraj) {
-
-    return new RamseteCommand(
-        tarmacToBallTraj,
-        this::getPose,
-        new RamseteController(),
-        constDrivetrain.KINEMATICS,
-        this::driveSpeed,
-        this);
-  }
-
   public void displayValuesOnDashboard() {
     displayOnDashboard = true;
   }
@@ -291,10 +249,8 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updatePose();
 
     if (displayOnDashboard) {
-      field.setRobotPose(getPose());
       SmartDashboard.putData(field);
 
       SmartDashboard.putNumber("Drivetrain Left Encoder", leftLead.getSelectedSensorPosition());
@@ -313,9 +269,6 @@ public class Drivetrain extends SubsystemBase {
       SmartDashboard.putNumber("Drivetrain Right Meters", getRightMeters());
 
       SmartDashboard.putNumber("Drivetrain Heading Degrees", navx.getRotation2d().getDegrees());
-
-      SmartDashboard.putNumber("Drivetrain Pose X Meters", getPose().getX());
-      SmartDashboard.putNumber("Drivetrain Pose Y Meters", getPose().getY());
 
     }
   }
