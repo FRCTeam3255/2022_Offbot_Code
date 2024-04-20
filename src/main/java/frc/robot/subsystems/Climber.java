@@ -9,13 +9,10 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.frcteam3255.components.SN_DoubleSolenoid;
 import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constClimber;
@@ -25,7 +22,6 @@ import frc.robot.RobotPreferences.prefClimber;
 public class Climber extends SubsystemBase {
 
   TalonFX climberMotor;
-  SN_DoubleSolenoid pivotPiston;
   TalonFXConfiguration config;
 
   DigitalInput minSwitch;
@@ -38,9 +34,6 @@ public class Climber extends SubsystemBase {
 
     minSwitch = new DigitalInput(mapClimber.CLIMBER_MINIMUM_SWITCH_DIO);
     maxSwitch = new DigitalInput(mapClimber.CLIMBER_MAXIMUM_SWITCH_DIO);
-
-    pivotPiston = new SN_DoubleSolenoid(PneumaticsModuleType.CTREPCM,
-        mapClimber.PIVOT_PISTON_SOLENOID_PCM_A, mapClimber.PIVOT_PISTON_SOLENOID_PCM_B);
 
     config = new TalonFXConfiguration();
     configure();
@@ -78,16 +71,6 @@ public class Climber extends SubsystemBase {
       speed = 0;
     }
 
-    // while angled, cannot go below minimum angled position
-    if (isAngled() && getClimberEncoderCounts() <= prefClimber.climberAngledMinPos.getValue() && speed < 0) {
-      speed = 0;
-    }
-
-    // while perpendicular, cannot go above maximum perpendicular position
-    if (!isAngled() && getClimberEncoderCounts() >= prefClimber.climberPerpendicularMaxPos.getValue() && speed > 0) {
-      speed = 0;
-    }
-
     // slow down climber speed when switching hooks
     if (getClimberEncoderCounts() > prefClimber.climberSlowdownMinThresholdEncoderCounts.getValue()
         && getClimberEncoderCounts() < prefClimber.climberSlowdownMaxThresholdEncoderCounts.getValue()) {
@@ -107,16 +90,6 @@ public class Climber extends SubsystemBase {
 
     double position = a_position.getValue();
 
-    if (isAngled()) {
-      position = MathUtil.clamp(position, prefClimber.climberAngledMinPos.getValue(),
-          prefClimber.climberAngledMaxPos.getValue());
-    }
-
-    else {
-      position = MathUtil.clamp(position, prefClimber.climberPerpendicularMinPos.getValue(),
-          prefClimber.climberPerpendicularMaxPos.getValue());
-    }
-
     climberMotor.set(ControlMode.Position, position,
         DemandType.ArbitraryFeedForward, prefClimber.climberArbitraryFeedForward.getValue());
   }
@@ -129,23 +102,8 @@ public class Climber extends SubsystemBase {
     climberMotor.setSelectedSensorPosition(0);
   }
 
-  public void setPerpendicular() {
-    pivotPiston.setRetracted();
-  };
-
-  public void setAngled() {
-    if (getClimberEncoderCounts() > prefClimber.climberAngledMinPos.getValue()) {
-      pivotPiston.setDeployed();
-    }
-
-  };
-
   public void neutralMotorOutput() {
     climberMotor.neutralOutput();
-  }
-
-  public boolean isAngled() {
-    return pivotPiston.isDeployed();
   }
 
   public boolean isMaxSwitch() {
@@ -177,7 +135,6 @@ public class Climber extends SubsystemBase {
       SmartDashboard.putNumber("Climber Encoder Counts", getClimberEncoderCounts());
       SmartDashboard.putBoolean("Climber Is At Minimum Switch", isMinSwitch());
       SmartDashboard.putBoolean("Climber Is At Maximum Switch", isMaxSwitch());
-      SmartDashboard.putBoolean("Climber Is Angled", isAngled());
     }
     if (isMinSwitch()) {
       resetClimberEncoderCounts();

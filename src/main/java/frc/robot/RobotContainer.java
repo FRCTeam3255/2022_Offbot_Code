@@ -97,13 +97,6 @@ public class RobotContainer {
         .onFalse(
             Commands.runOnce(() -> subDrivetrain.setArcadeDriveSpeedMultiplier(prefDrivetrain.driveArcadeSpeedMid)));
 
-    // Climbing
-    conDriver.btn_A
-        .onTrue(Commands.runOnce(() -> subClimber.setAngled()));
-
-    conDriver.btn_B
-        .onTrue(Commands.runOnce(() -> subClimber.setPerpendicular()));
-
     // Prep Climb
     conDriver.btn_Back
         .onTrue(Commands.runOnce(() -> subShooter.neutralOutput()))
@@ -135,15 +128,15 @@ public class RobotContainer {
 
     // Turret
     conOperator.btn_LBump.whileTrue(comMoveTurret);
-    conOperator.btn_LStick.onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees)));
-    conOperator.btn_RStick.onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
+    conOperator.btn_LStick
+        .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees)));
+    conOperator.btn_RStick
+        .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
 
-        
     // Intake
-        
+
     conOperator.btn_LTrig.whileTrue(comCollectCargo);
     conOperator.btn_B.whileTrue(comDiscardCargo);
-    conOperator.btn_Back.onTrue(Commands.runOnce(() -> subIntake.setRetracted()));
 
     // Presets
     conOperator.POV_North
