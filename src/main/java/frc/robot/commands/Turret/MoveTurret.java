@@ -6,13 +6,13 @@ package frc.robot.commands.Turret;
 
 import com.frcteam3255.joystick.SN_DualActionStick;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AimState;
 import frc.robot.RobotPreferences.prefTurret;
 import frc.robot.subsystems.Turret;
 
-public class MoveTurret extends CommandBase {
+public class MoveTurret extends Command {
 
   Turret subTurret;
   SN_DualActionStick conOperator;

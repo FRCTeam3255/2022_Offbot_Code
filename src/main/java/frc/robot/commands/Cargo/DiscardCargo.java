@@ -4,7 +4,7 @@
 
 package frc.robot.commands.Cargo;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.RobotPreferences;
 import frc.robot.Constants.CargoState;
@@ -12,7 +12,7 @@ import frc.robot.RobotPreferences.prefTransfer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Transfer;
 
-public class DiscardCargo extends CommandBase {
+public class DiscardCargo extends Command {
 
   Intake subIntake;
   Transfer subTransfer;
@@ -56,10 +56,6 @@ public class DiscardCargo extends CommandBase {
     if (precedence) {
 
       RobotContainer.cargoState = CargoState.DISCARDING;
-
-      if (subIntake.isDeployed()) {
-        subIntake.setRetracted();
-      }
 
       subTransfer.setTopBeltSpeed(prefTransfer.transferBeltReverseSpeed);
       subTransfer.setBottomBeltSpeed(prefTransfer.transferBeltReverseSpeed);

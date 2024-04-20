@@ -12,15 +12,12 @@ public final class RobotMap {
     public static final int CLIMBER_MINIMUM_SWITCH_DIO = 6;
     public static final int CLIMBER_MAXIMUM_SWITCH_DIO = 0;
 
-    public static final int PIVOT_PISTON_SOLENOID_PCM_A = 2;
-    public static final int PIVOT_PISTON_SOLENOID_PCM_B = 3;
   }
 
   public static final class mapControllers {
 
     public static final int DRIVER_CONTROLLER = 0;
     public static final int OPERATOR_CONTROLLER = 1;
-    public static final int SWITCHBOARD = 2;
 
   }
 
@@ -44,9 +41,6 @@ public final class RobotMap {
   public static final class mapIntake {
 
     public static final int INTAKE_MOTOR_CAN = 30;
-
-    public static final int INTAKE_SOLENOID_PCM_FORWARD = 0;
-    public static final int INTAKE_SOLENOID_PCM_REVERSE = 1;
 
   }
 
