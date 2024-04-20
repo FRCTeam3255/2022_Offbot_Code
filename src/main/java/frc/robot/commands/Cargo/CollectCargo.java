@@ -45,10 +45,6 @@ public class CollectCargo extends Command {
 
   @Override
   public void initialize() {
-    // don't deploy intake if there are two cargo in the robot
-    if (!(subTransfer.isTopBallCollected() && subTransfer.isBottomBallCollected())) {
-      subIntake.setDeployed();
-    }
   }
 
   @Override
@@ -67,10 +63,6 @@ public class CollectCargo extends Command {
         outputIntake = RobotPreferences.zeroDoublePref;
         outputEntrance = RobotPreferences.zeroDoublePref;
         outputBottom = RobotPreferences.zeroDoublePref;
-
-        if (subIntake.isDeployed()) {
-          subIntake.setRetracted();
-        }
       }
     }
 
