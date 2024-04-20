@@ -59,7 +59,6 @@ public class Drivetrain extends SubsystemBase {
     leftFollow = new TalonFX(mapDrivetrain.LEFT_FOLLOW_MOTOR_CAN);
     rightLead = new TalonFX(mapDrivetrain.RIGHT_LEAD_MOTOR_CAN);
     rightFollow = new TalonFX(mapDrivetrain.RIGHT_FOLLOW_MOTOR_CAN);
-    leftLead = new TalonFX(0);
 
     navx = new AHRS();
 
