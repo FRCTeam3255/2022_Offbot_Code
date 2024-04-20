@@ -7,7 +7,6 @@ package frc.robot.commands.Climber;
 import com.frcteam3255.joystick.SN_F310Gamepad;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotPreferences.prefTurret;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Turret;
 
