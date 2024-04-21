@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.frcteam3255.preferences.SN_DoublePreference;
 
@@ -18,7 +17,7 @@ import frc.robot.RobotMap.mapTransfer;
 
 public class Transfer extends SubsystemBase {
 
-  TalonFX entranceWheel;
+  TalonSRX entranceWheel;
   TalonSRX bottomBelt;
   TalonSRX topBelt;
 
@@ -31,7 +30,7 @@ public class Transfer extends SubsystemBase {
 
   public Transfer() {
 
-    entranceWheel = new TalonFX(mapTransfer.ENTRANCE_MOTOR_CAN);
+    entranceWheel = new TalonSRX(mapTransfer.ENTRANCE_MOTOR_CAN);
     bottomBelt = new TalonSRX(mapTransfer.BOTTOM_MOTOR_CAN);
     topBelt = new TalonSRX(mapTransfer.TOP_MOTOR_CAN);
 

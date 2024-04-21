@@ -48,7 +48,9 @@ public class Climber extends SubsystemBase {
   }
 
   public void setClimberSpeed(double speed) {
-
+    if ((isMinSwitch() && speed < 0) || (isMaxSwitch() && speed > 0)) {
+      speed = 0;
+    }
     climberMotor.set(speed);
   }
 
@@ -80,7 +82,7 @@ public class Climber extends SubsystemBase {
     displayOnDashboard = false;
   }
 
-  // @Override
+  @Override
   public void periodic() {
     // This method will be called once per scheduler run
     if (displayOnDashboard) {

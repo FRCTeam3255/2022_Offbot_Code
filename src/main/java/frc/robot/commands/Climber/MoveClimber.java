@@ -37,10 +37,6 @@ public class MoveClimber extends Command {
 
     speed = conDriver.getAxisRT() - conDriver.getAxisLT();
 
-    if ((subClimber.isMinSwitch() && speed < 0) && (subClimber.isMaxSwitch() && speed > 0)) {
-      speed = 0;
-    }
-
     subClimber.setClimberSpeed(speed);
 
   }
