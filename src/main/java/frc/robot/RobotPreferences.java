@@ -101,18 +101,18 @@ public final class RobotPreferences {
 
   public static final class prefPreset {
 
-    public static final SN_DoublePreference presetFenderShooterRPM = new SN_DoublePreference(
-        "presetFenderShooterRPM", 2700);
+    public static final SN_DoublePreference presetFenderShooterSpeed = new SN_DoublePreference(
+        "presetFenderShooterSpeed", 1);
     public static final SN_DoublePreference presetFenderHoodDegrees = new SN_DoublePreference(
         "presetFenderHoodDegrees", 7);
 
-    public static final SN_DoublePreference presetTarmacShooterRPM = new SN_DoublePreference(
-        "presetTarmacShooterRPM", 3400);
+    public static final SN_DoublePreference presetTarmacShooterSpeed = new SN_DoublePreference(
+        "presetTarmacShooterSpeed", 0.75);
     public static final SN_DoublePreference presetTarmacHoodDegrees = new SN_DoublePreference(
         "presetTarmacHoodDegrees", 32);
 
-    public static final SN_DoublePreference presetLaunchpadShooterRPM = new SN_DoublePreference(
-        "presetLaunchpadShooterRPM", 4200);
+    public static final SN_DoublePreference presetLaunchpadShooterSpeed = new SN_DoublePreference(
+        "presetLaunchpadShooterSpeed", 0.5);
     public static final SN_DoublePreference presetLaunchpadHoodDegrees = new SN_DoublePreference(
         "presetLaunchpadHoodDegrees", 38);
 
@@ -130,8 +130,8 @@ public final class RobotPreferences {
     public static final SN_DoublePreference shooterClosedLoopRamp = new SN_DoublePreference(
         "shooterClosedLoopRamp", 0.2);
 
-    public static final SN_DoublePreference shooterAllowableClosedloopErrorRPM = new SN_DoublePreference(
-        "shooterAllowableClosedloopErrorRPM", 15);
+    public static final SN_DoublePreference shooterAllowableClosedloopErrorSpeed = new SN_DoublePreference(
+        "shooterAllowableClosedloopErrorSpeed", 0.1);
 
   }
 

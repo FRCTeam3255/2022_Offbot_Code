@@ -130,7 +130,8 @@ public final class Constants {
 
   public static final class constShooter {
 
-    public static final boolean INVERTED = false;
+    public static final boolean LEAD_INVERTED = false;
+    public static final boolean FOLLOW_INVERTED = true;
 
     // ty (x): y offset of limelight
     // velocity (y): rpm of shooter flywheel to make shot
