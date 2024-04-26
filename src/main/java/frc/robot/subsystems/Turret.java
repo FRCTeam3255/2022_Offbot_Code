@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
+import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -45,10 +46,12 @@ public class Turret extends SubsystemBase {
     turretMotor.setInverted(constTurret.INVERTED);
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    turretMotor.setSoftLimit(SoftLimitDirection.kForward, ((float) prefTurret.turretMaxDegrees.getValue()) / 360);
+    turretMotor.setSoftLimit(SoftLimitDirection.kForward,
+        (float) SN_Math.degreesToFalcon(prefTurret.turretMaxDegrees.getValue(), constTurret.GEAR_RATIO));
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    turretMotor.setSoftLimit(SoftLimitDirection.kReverse, ((float) prefTurret.turretMinDegrees.getValue()) / 360);
+    turretMotor.setSoftLimit(SoftLimitDirection.kReverse,
+        (float) SN_Math.degreesToFalcon(prefTurret.turretMinDegrees.getValue(), constTurret.GEAR_RATIO));
 
     turretMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -59,7 +62,7 @@ public class Turret extends SubsystemBase {
    * @param degrees Degree count to set turret to
    */
   public void setAngle(double degrees) {
-    turretPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
+    turretPIDController.setReference(degrees / 360, CANSparkMax.ControlType.kPosition);
     // TODO: I don't know if the degrees are still accurate o.O so it might explode
   }
 
@@ -77,8 +80,12 @@ public class Turret extends SubsystemBase {
    * 
    * @return Turret angle in degrees
    */
-  public double getAngle() {
+  public double getAngleDegrees() {
     return (turretMotor.getEncoder().getPosition()) * 360;
+  }
+
+  public double getRawAngle() {
+    return turretMotor.getEncoder().getPosition();
   }
 
   public void setSpeed(double speed) {
@@ -102,7 +109,9 @@ public class Turret extends SubsystemBase {
 
     if (displayOnDashboard) {
 
-      SmartDashboard.putNumber("Turret Angle Degrees", getAngle());
+      SmartDashboard.putNumber("Turret Angle Degrees", getAngleDegrees());
+      SmartDashboard.putNumber("Turret Raw Angle", getRawAngle());
+
     }
 
   }

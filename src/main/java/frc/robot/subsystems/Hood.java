@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
+import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -49,16 +50,22 @@ public class Hood extends SubsystemBase {
     hoodMotor.setIdleMode(IdleMode.kCoast);
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    hoodMotor.setSoftLimit(SoftLimitDirection.kForward, ((float) prefHood.hoodMaxDegrees.getValue()) / 360);
+    hoodMotor.setSoftLimit(SoftLimitDirection.kForward,
+        (float) SN_Math.degreesToFalcon(prefHood.hoodMaxDegrees.getValue(), constHood.GEAR_RATIO));
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    hoodMotor.setSoftLimit(SoftLimitDirection.kReverse, ((float) prefHood.hoodMinDegrees.getValue()) / 360);
+    hoodMotor.setSoftLimit(SoftLimitDirection.kReverse,
+        (float) SN_Math.degreesToFalcon(prefHood.hoodMinDegrees.getValue(), constHood.GEAR_RATIO));
 
     resetAngleToBottom();
   }
 
   public double getAngleDegrees() {
     return (hoodMotor.getEncoder().getPosition()) * 360;
+  }
+
+  public double getRawAngle() {
+    return hoodMotor.getEncoder().getPosition();
   }
 
   public void setAngle(double a_degrees) {
@@ -98,6 +105,7 @@ public class Hood extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Hood Angle Degrees", getAngleDegrees());
+      SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
       SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
 
     }
