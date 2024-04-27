@@ -130,9 +130,6 @@ public final class RobotPreferences {
     public static final SN_DoublePreference shooterClosedLoopRamp = new SN_DoublePreference(
         "shooterClosedLoopRamp", 0.2);
 
-    public static final SN_DoublePreference shooterAllowableClosedloopErrorSpeed = new SN_DoublePreference(
-        "shooterAllowableClosedloopErrorSpeed", 0.1);
-
   }
 
   public static final class prefTransfer {

@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -47,15 +46,15 @@ public class Hood extends SubsystemBase {
     hoodPIDController.setD(prefHood.hoodD.getValue());
 
     hoodMotor.setInverted(constHood.INVERTED);
-    hoodMotor.setIdleMode(IdleMode.kCoast);
+    hoodMotor.setIdleMode(IdleMode.kBrake);
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kForward,
-        (float) SN_Math.degreesToFalcon(prefHood.hoodMaxDegrees.getValue(), constHood.GEAR_RATIO));
+        (float) ((prefHood.hoodMaxDegrees.getValue() / 360) * constHood.GEAR_RATIO));
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kReverse,
-        (float) SN_Math.degreesToFalcon(prefHood.hoodMinDegrees.getValue(), constHood.GEAR_RATIO));
+        (float) ((prefHood.hoodMinDegrees.getValue() / 360) * constHood.GEAR_RATIO));
 
     resetAngleToBottom();
   }

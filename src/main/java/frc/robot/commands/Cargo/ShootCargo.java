@@ -52,7 +52,7 @@ public class ShootCargo extends Command {
 
     buffer++;
 
-    isShooterReady = subShooter.isMotorAtSpeed() && buffer > 15;
+    isShooterReady = buffer > 15;
 
     if (!isShooterReady) {
 

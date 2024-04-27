@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -47,11 +46,11 @@ public class Turret extends SubsystemBase {
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     turretMotor.setSoftLimit(SoftLimitDirection.kForward,
-        (float) SN_Math.degreesToFalcon(prefTurret.turretMaxDegrees.getValue(), constTurret.GEAR_RATIO));
+        (float) ((prefTurret.turretMaxDegrees.getValue() / 360) * constTurret.GEAR_RATIO));
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     turretMotor.setSoftLimit(SoftLimitDirection.kReverse,
-        (float) SN_Math.degreesToFalcon(prefTurret.turretMinDegrees.getValue(), constTurret.GEAR_RATIO));
+        (float) ((prefTurret.turretMinDegrees.getValue() / 360) * constTurret.GEAR_RATIO));
 
     turretMotor.setIdleMode(IdleMode.kBrake);
   }

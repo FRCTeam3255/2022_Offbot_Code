@@ -8,7 +8,6 @@ import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -32,8 +31,6 @@ public class Drivetrain extends SubsystemBase {
   AHRS navx;
 
   Field2d field = new Field2d();
-
-  SparkPIDController config;
 
   double arcadeDriveSpeedMultiplier;
   double arcadeDriveTurnMultiplier;
@@ -67,11 +64,6 @@ public class Drivetrain extends SubsystemBase {
 
     field = new Field2d();
 
-    config = leftLead.getPIDController();
-    config = leftFollow.getPIDController();
-    config = rightLead.getPIDController();
-    config = rightFollow.getPIDController();
-
     configure();
     loadTrajectories();
   }
@@ -81,10 +73,6 @@ public class Drivetrain extends SubsystemBase {
     leftFollow.restoreFactoryDefaults();
     rightLead.restoreFactoryDefaults();
     rightFollow.restoreFactoryDefaults();
-
-    config.setP(prefDrivetrain.driveP.getValue());
-    config.setI(prefDrivetrain.driveI.getValue());
-    config.setD(prefDrivetrain.driveD.getValue());
 
     leftLead.setInverted(constDrivetrain.LEFT_INVERTED);
     leftFollow.setInverted(constDrivetrain.LEFT_INVERTED);

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constShooter;
 import frc.robot.RobotMap.mapShooter;
-import frc.robot.RobotPreferences.prefShooter;
 
 public class Shooter extends SubsystemBase {
 
@@ -57,18 +56,6 @@ public class Shooter extends SubsystemBase {
     leadMotor.set(0);
   }
 
-  public double getMotorSpeed() {
-    return leadMotor.getAppliedOutput();
-  }
-
-  public boolean isMotorAtSpeed() {
-    return getMotorErrorToGoalSpeed() < prefShooter.shooterAllowableClosedloopErrorSpeed.getValue();
-  }
-
-  private double getMotorErrorToGoalSpeed() {
-    return Math.abs(getGoalSpeed() - getMotorSpeed());
-  }
-
   public void setGoalSpeed(double goalSpeed) {
     this.goalSpeed = goalSpeed;
   }
@@ -98,11 +85,8 @@ public class Shooter extends SubsystemBase {
 
     if (displayOnDashboard) {
 
-      SmartDashboard.putNumber("Shooter Motor Speed", getMotorSpeed());
       SmartDashboard.putNumber("Shooter Motor Percent Output", leadMotor.getAppliedOutput());
       SmartDashboard.putNumber("Shooter Goal Speed", getGoalSpeed());
-      SmartDashboard.putBoolean("Shooter Is At Speed", isMotorAtSpeed());
-      SmartDashboard.putNumber("Shooter Error to Goal Speed", getMotorErrorToGoalSpeed());
 
     }
 
