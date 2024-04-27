@@ -4,101 +4,72 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constShooter;
 import frc.robot.RobotMap.mapShooter;
-import frc.robot.RobotPreferences.prefShooter;
 
 public class Shooter extends SubsystemBase {
 
-  TalonFX leadMotor;
-  TalonFX followMotor;
-  TalonFXConfiguration config;
+  CANSparkMax leadMotor;
+  CANSparkMax followMotor;
 
-  double goalRPM;
+  double goalSpeed;
 
   boolean displayOnDashboard;
 
   public Shooter() {
 
-    leadMotor = new TalonFX(mapShooter.LEAD_MOTOR_CAN);
-    followMotor = new TalonFX(mapShooter.FOLLOW_MOTOR_CAN);
+    leadMotor = new CANSparkMax(mapShooter.LEAD_MOTOR_CAN, MotorType.kBrushless);
+    followMotor = new CANSparkMax(mapShooter.FOLLOW_MOTOR_CAN, MotorType.kBrushless);
 
-    config = new TalonFXConfiguration();
     configure();
 
     displayOnDashboard = true;
 
-    goalRPM = 0;
+    goalSpeed = 0;
   }
 
   public void configure() {
-    config.slot0.kF = prefShooter.shooterF.getValue();
-    config.slot0.kP = prefShooter.shooterP.getValue();
-    config.slot0.kI = prefShooter.shooterI.getValue();
-    config.slot0.kD = prefShooter.shooterD.getValue();
 
-    config.slot0.integralZone = prefShooter.shooterIZone.getValue();
+    leadMotor.restoreFactoryDefaults();
+    followMotor.restoreFactoryDefaults();
 
-    leadMotor.configFactoryDefault();
-    followMotor.configFactoryDefault();
+    leadMotor.setInverted(constShooter.LEAD_INVERTED);
+    followMotor.setInverted(constShooter.FOLLOW_INVERTED);
 
-    leadMotor.configAllSettings(config);
-
-    leadMotor.setInverted(constShooter.INVERTED);
-    followMotor.setInverted(InvertType.OpposeMaster);
-
-    leadMotor.setNeutralMode(NeutralMode.Coast);
-
-    leadMotor.configClosedloopRamp(prefShooter.shooterClosedLoopRamp.getValue());
+    leadMotor.setIdleMode(IdleMode.kCoast);
 
     followMotor.follow(leadMotor);
   }
 
-  public void setMotorRPM(double rpm) {
-    double velocity = SN_Math.RPMToVelocity(rpm, SN_Math.TALONFX_ENCODER_PULSES_PER_COUNT);
-    leadMotor.set(ControlMode.Velocity, velocity);
+  public void setMotorSpeed(double speed) {
+    leadMotor.set(speed);
   }
 
   public void neutralOutput() {
-    leadMotor.neutralOutput();
+    leadMotor.set(0);
   }
 
-  public double getMotorRPM() {
-    return SN_Math.velocityToRPM(leadMotor.getSelectedSensorVelocity(), SN_Math.TALONFX_ENCODER_PULSES_PER_COUNT);
+  public void setGoalSpeed(double goalSpeed) {
+    this.goalSpeed = goalSpeed;
   }
 
-  public boolean isMotorAtSpeed() {
-    return getMotorErrorToGoalRPM() < prefShooter.shooterAllowableClosedloopErrorRPM.getValue();
+  public void setGoalSpeed(SN_DoublePreference goalSpeed) {
+    setGoalSpeed(goalSpeed.getValue());
   }
 
-  private double getMotorErrorToGoalRPM() {
-    return Math.abs(getGoalRPM() - getMotorRPM());
+  public double getGoalSpeed() {
+    return goalSpeed;
   }
 
-  public void setGoalRPM(double goalRPM) {
-    this.goalRPM = goalRPM;
-  }
-
-  public void setGoalRPM(SN_DoublePreference goalRPM) {
-    setGoalRPM(goalRPM.getValue());
-  }
-
-  public double getGoalRPM() {
-    return goalRPM;
-  }
-
-  public void setMotorRPMToGoalRPM() {
-    setMotorRPM(getGoalRPM());
+  public void setMotorSpeedToGoalSpeed() {
+    setMotorSpeed(getGoalSpeed());
   }
 
   public void displayValuesOnDashboard() {
@@ -114,11 +85,8 @@ public class Shooter extends SubsystemBase {
 
     if (displayOnDashboard) {
 
-      SmartDashboard.putNumber("Shooter Motor RPM", getMotorRPM());
-      SmartDashboard.putNumber("Shooter Motor Percent Output", leadMotor.getMotorOutputPercent());
-      SmartDashboard.putNumber("Shooter Goal RPM", getGoalRPM());
-      SmartDashboard.putBoolean("Shooter Is At Speed", isMotorAtSpeed());
-      SmartDashboard.putNumber("Shooter Error to Goal RPM", getMotorErrorToGoalRPM());
+      SmartDashboard.putNumber("Shooter Motor Percent Output", leadMotor.getAppliedOutput());
+      SmartDashboard.putNumber("Shooter Goal Speed", getGoalSpeed());
 
     }
 

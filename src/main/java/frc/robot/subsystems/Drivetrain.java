@@ -4,15 +4,12 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.frcteam3255.preferences.SN_DoublePreference;
 import com.frcteam3255.utils.SN_Math;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -26,16 +23,14 @@ import frc.robot.RobotMap.mapDrivetrain;
 import frc.robot.RobotPreferences.prefDrivetrain;
 
 public class Drivetrain extends SubsystemBase {
-  TalonFX leftLead;
-  TalonFX leftFollow;
-  TalonFX rightLead;
-  TalonFX rightFollow;
+  CANSparkMax leftLead;
+  CANSparkMax leftFollow;
+  CANSparkMax rightLead;
+  CANSparkMax rightFollow;
 
   AHRS navx;
 
   Field2d field = new Field2d();
-
-  TalonFXConfiguration config;
 
   double arcadeDriveSpeedMultiplier;
   double arcadeDriveTurnMultiplier;
@@ -55,10 +50,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
 
-    leftLead = new TalonFX(mapDrivetrain.LEFT_LEAD_MOTOR_CAN);
-    leftFollow = new TalonFX(mapDrivetrain.LEFT_FOLLOW_MOTOR_CAN);
-    rightLead = new TalonFX(mapDrivetrain.RIGHT_LEAD_MOTOR_CAN);
-    rightFollow = new TalonFX(mapDrivetrain.RIGHT_FOLLOW_MOTOR_CAN);
+    leftLead = new CANSparkMax(mapDrivetrain.LEFT_LEAD_MOTOR_CAN, MotorType.kBrushless);
+    leftFollow = new CANSparkMax(mapDrivetrain.LEFT_FOLLOW_MOTOR_CAN, MotorType.kBrushless);
+    rightLead = new CANSparkMax(mapDrivetrain.RIGHT_LEAD_MOTOR_CAN, MotorType.kBrushless);
+    rightFollow = new CANSparkMax(mapDrivetrain.RIGHT_FOLLOW_MOTOR_CAN, MotorType.kBrushless);
 
     navx = new AHRS();
 
@@ -69,35 +64,25 @@ public class Drivetrain extends SubsystemBase {
 
     field = new Field2d();
 
-    config = new TalonFXConfiguration();
-
     configure();
     loadTrajectories();
   }
 
   public void configure() {
-    config.slot0.kP = prefDrivetrain.driveP.getValue();
-    config.slot0.kI = prefDrivetrain.driveI.getValue();
-    config.slot0.kD = prefDrivetrain.driveD.getValue();
-
-    leftLead.configFactoryDefault();
-    leftFollow.configFactoryDefault();
-    rightLead.configFactoryDefault();
-    rightFollow.configFactoryDefault();
-
-    leftLead.configAllSettings(config);
-    rightLead.configAllSettings(config);
+    leftLead.restoreFactoryDefaults();
+    leftFollow.restoreFactoryDefaults();
+    rightLead.restoreFactoryDefaults();
+    rightFollow.restoreFactoryDefaults();
 
     leftLead.setInverted(constDrivetrain.LEFT_INVERTED);
-    leftFollow.setInverted(InvertType.FollowMaster);
+    leftFollow.setInverted(constDrivetrain.LEFT_INVERTED);
     rightLead.setInverted(constDrivetrain.RIGHT_INVERTED);
-    rightFollow.setInverted(InvertType.FollowMaster);
+    rightFollow.setInverted(constDrivetrain.RIGHT_INVERTED);
 
-    leftLead.setSensorPhase(constDrivetrain.LEFT_INVERTED);
-    rightLead.setSensorPhase(constDrivetrain.RIGHT_INVERTED);
-
-    leftLead.setNeutralMode(NeutralMode.Brake);
-    rightLead.setNeutralMode(NeutralMode.Brake);
+    leftLead.setIdleMode(IdleMode.kBrake);
+    leftFollow.setIdleMode(IdleMode.kBrake);
+    rightLead.setIdleMode(IdleMode.kBrake);
+    rightFollow.setIdleMode(IdleMode.kBrake);
 
     leftFollow.follow(leftLead);
     rightFollow.follow(rightLead);
@@ -105,7 +90,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getLeftMeters() {
-    double falconCounts = leftLead.getSelectedSensorPosition();
+    double falconCounts = leftLead.getEncoder().getPosition();
     double falconRotations = falconCounts / SN_Math.TALONFX_ENCODER_PULSES_PER_COUNT;
     double wheelRotations = falconRotations / constDrivetrain.GEAR_RATIO;
     double meters = wheelRotations * constDrivetrain.WHEEL_CIRCUMFERENCE;
@@ -114,7 +99,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getRightMeters() {
-    double falconCounts = rightLead.getSelectedSensorPosition();
+    double falconCounts = rightLead.getEncoder().getPosition();
     double falconRotations = falconCounts / SN_Math.TALONFX_ENCODER_PULSES_PER_COUNT;
     double wheelRotations = falconRotations / constDrivetrain.GEAR_RATIO;
     double meters = wheelRotations * constDrivetrain.WHEEL_CIRCUMFERENCE;
@@ -123,22 +108,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetEncoderCounts() {
-    leftLead.setSelectedSensorPosition(0);
-    rightLead.setSelectedSensorPosition(0);
-  }
-
-  public double getLeftMetersPerSecond() {
-    return SN_Math.falconToMPS(
-        leftLead.getSelectedSensorVelocity(),
-        constDrivetrain.WHEEL_CIRCUMFERENCE,
-        constDrivetrain.GEAR_RATIO);
-  }
-
-  public double getRightMetersPerSecond() {
-    return SN_Math.falconToMPS(
-        rightLead.getSelectedSensorVelocity(),
-        constDrivetrain.WHEEL_CIRCUMFERENCE,
-        constDrivetrain.GEAR_RATIO);
+    leftLead.getEncoder().setPosition(0);
+    rightLead.getEncoder().setPosition(0);
   }
 
   public void resetPose(Pose2d pose) {
@@ -154,21 +125,13 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speed, double turn) {
-    leftLead.set(ControlMode.PercentOutput, speed * arcadeDriveSpeedMultiplier,
-        DemandType.ArbitraryFeedForward, +turn * arcadeDriveTurnMultiplier);
-    rightLead.set(ControlMode.PercentOutput, speed * arcadeDriveSpeedMultiplier,
-        DemandType.ArbitraryFeedForward, -turn * arcadeDriveTurnMultiplier);
+    leftLead.set((speed * arcadeDriveSpeedMultiplier) - (+turn * arcadeDriveTurnMultiplier));
+    rightLead.set((speed * arcadeDriveSpeedMultiplier) - (-turn * arcadeDriveTurnMultiplier));
   }
 
-  public void driveSpeed(double leftMPS, double rightMPS) {
-
-    double leftVelocity = SN_Math.MPSToFalcon(
-        leftMPS, constDrivetrain.WHEEL_CIRCUMFERENCE, constDrivetrain.GEAR_RATIO);
-    double rightVelocity = SN_Math.MPSToFalcon(
-        rightMPS, constDrivetrain.WHEEL_CIRCUMFERENCE, constDrivetrain.GEAR_RATIO);
-
-    leftLead.set(ControlMode.Velocity, leftVelocity);
-    rightLead.set(ControlMode.Velocity, rightVelocity);
+  public void driveSpeed(double leftVelocity, double rightVelocity) {
+    leftLead.set(leftVelocity);
+    rightLead.set(rightVelocity);
 
   }
 
@@ -253,17 +216,8 @@ public class Drivetrain extends SubsystemBase {
     if (displayOnDashboard) {
       SmartDashboard.putData(field);
 
-      SmartDashboard.putNumber("Drivetrain Left Encoder", leftLead.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Drivetrain Right Encoder", rightLead.getSelectedSensorPosition());
-
-      SmartDashboard.putNumber("Drivetrain Left Percent Output", leftLead.getMotorOutputPercent());
-      SmartDashboard.putNumber("Drivetrain Right Percent Output", rightLead.getMotorOutputPercent());
-
-      SmartDashboard.putNumber("Drivetrain Left Velocity", leftLead.getSelectedSensorVelocity());
-      SmartDashboard.putNumber("Drivetrain Right Velocity", rightLead.getSelectedSensorVelocity());
-
-      SmartDashboard.putNumber("Drivetrain Left Meters Per Second", getLeftMetersPerSecond());
-      SmartDashboard.putNumber("Drivetrain Right Meters Per Second", getRightMetersPerSecond());
+      SmartDashboard.putNumber("Drivetrain Left Encoder", leftLead.getEncoder().getPosition());
+      SmartDashboard.putNumber("Drivetrain Right Encoder", rightLead.getEncoder().getPosition());
 
       SmartDashboard.putNumber("Drivetrain Left Meters", getLeftMeters());
       SmartDashboard.putNumber("Drivetrain Right Meters", getRightMeters());
