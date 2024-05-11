@@ -77,7 +77,7 @@ public final class RobotPreferences {
     public static final SN_DoublePreference hoodArbitraryFeedForward = new SN_DoublePreference(
         "hoodArbitraryFeedForward", 0.040078);
 
-    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 0.09);
+    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 1);
     public static final SN_DoublePreference hoodI = new SN_DoublePreference("hoodI", 0);
     public static final SN_DoublePreference hoodD = new SN_DoublePreference("hoodD", 0);
 
@@ -94,9 +94,8 @@ public final class RobotPreferences {
   }
 
   public static final class prefIntake {
-
     public static final SN_DoublePreference intakeRollerSpeed = new SN_DoublePreference("intakeRollerSpeed", 0.8);
-
+    public static final SN_DoublePreference intakeSpitSpeed = new SN_DoublePreference("intakeSpitSpeed", -0.8);
   }
 
   public static final class prefPreset {
@@ -119,17 +118,10 @@ public final class RobotPreferences {
   }
 
   public static final class prefShooter {
-
-    public static final SN_DoublePreference shooterF = new SN_DoublePreference("shooterF", 0.04609);
-    public static final SN_DoublePreference shooterP = new SN_DoublePreference("shooterP", 0.21);
-    public static final SN_DoublePreference shooterI = new SN_DoublePreference("shooterI", 0.006);
-    public static final SN_DoublePreference shooterD = new SN_DoublePreference("shooterD", 10);
-
-    public static final SN_DoublePreference shooterIZone = new SN_DoublePreference("shooterIZone", 200);
-
-    public static final SN_DoublePreference shooterClosedLoopRamp = new SN_DoublePreference(
-        "shooterClosedLoopRamp", 0.2);
-
+    public static final SN_DoublePreference shooterF = new SN_DoublePreference("shooterF", 0);
+    public static final SN_DoublePreference shooterP = new SN_DoublePreference("shooterP", 1);
+    public static final SN_DoublePreference shooterI = new SN_DoublePreference("shooterI", 0);
+    public static final SN_DoublePreference shooterD = new SN_DoublePreference("shooterD", 0);
   }
 
   public static final class prefTransfer {
@@ -149,9 +141,9 @@ public final class RobotPreferences {
     public static final SN_DoublePreference turretArbitraryFeedForward = new SN_DoublePreference(
         "turretArbitraryFeedForward", 0.01);
 
-    public static final SN_DoublePreference turretP = new SN_DoublePreference("turretP", 0.2);
+    public static final SN_DoublePreference turretP = new SN_DoublePreference("turretP", 1);
     public static final SN_DoublePreference turretI = new SN_DoublePreference("turretI", 0);
-    public static final SN_DoublePreference turretD = new SN_DoublePreference("turretD", 3.4);
+    public static final SN_DoublePreference turretD = new SN_DoublePreference("turretD", 0);
 
     public static final SN_DoublePreference turretAllowableClosedloopErrorDegrees = new SN_DoublePreference(
         "turretAllowableClosedloopErrorDegrees", 0.5);
@@ -163,12 +155,13 @@ public final class RobotPreferences {
     public static final SN_DoublePreference turretMinDegrees = new SN_DoublePreference("turretMinDegrees", 0);
     public static final SN_DoublePreference turretMaxDegrees = new SN_DoublePreference("turretMaxDegrees", 360);
     public static final SN_DoublePreference turretFacingTowardsIntakeDegrees = new SN_DoublePreference(
-        "turretFacingTowardsIntakeDegrees", -90);
+        "turretFacingTowardsIntakeDegrees", 270);
     public static final SN_DoublePreference turretFacingAwayFromIntakeDegrees = new SN_DoublePreference(
         "turretFacingAwayFromIntakeDegrees", 90);
 
     public static final SN_DoublePreference turretClimberThreshold = new SN_DoublePreference(
         "turretClimberThreshold", -269);
+    // TODO: Update if we want climber functionality
 
     public static final SN_DoublePreference turretDeadzoneSmall = new SN_DoublePreference("turretDeadzoneMin", -205);
     public static final SN_DoublePreference turretDeadzoneLarge = new SN_DoublePreference("turretDeadzoneMax", 25);

@@ -134,7 +134,6 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
 
     // Intake
-
     conOperator.btn_LTrig.whileTrue(comCollectCargo);
     conOperator.btn_B.whileTrue(comDiscardCargo);
 

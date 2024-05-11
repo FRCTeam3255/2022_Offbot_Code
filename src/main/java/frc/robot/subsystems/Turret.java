@@ -5,14 +5,12 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
-import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constTurret;
@@ -25,6 +23,7 @@ public class Turret extends SubsystemBase {
   SparkPIDController turretPIDController;
 
   boolean displayOnDashboard;
+  final double conversionFactor = 360 / constTurret.GEAR_RATIO;
 
   public Turret() {
 
@@ -46,7 +45,7 @@ public class Turret extends SubsystemBase {
 
     turretMotor.setInverted(constTurret.INVERTED);
 
-    turretMotor.getEncoder().setPositionConversionFactor(360 / constTurret.GEAR_RATIO);
+    turretMotor.getEncoder().setPositionConversionFactor(conversionFactor);
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     turretMotor.setSoftLimit(SoftLimitDirection.kForward,
