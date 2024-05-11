@@ -24,9 +24,9 @@ public class Transfer extends SubsystemBase {
   TalonSRX bottomBelt;
   TalonSRX topBelt;
 
-  DigitalInput bottomLeftSwitch;
+  DigitalInput bottomSwitch;
   DigitalInput bottomRightSwitch;
-  DigitalInput topLeftSwitch;
+  DigitalInput topSwitch;
   DigitalInput topRightSwitch;
 
   boolean displayOnDashboard;
@@ -37,10 +37,8 @@ public class Transfer extends SubsystemBase {
     bottomBelt = new TalonSRX(mapTransfer.BOTTOM_MOTOR_CAN);
     topBelt = new TalonSRX(mapTransfer.TOP_MOTOR_CAN);
 
-    bottomLeftSwitch = new DigitalInput(mapTransfer.BOTTOM_LEFT_SWITCH_DIO);
-    bottomRightSwitch = new DigitalInput(mapTransfer.BOTTOM_RIGHT_SWITCH_DIO);
-    topLeftSwitch = new DigitalInput(mapTransfer.TOP_LEFT_SWITCH_DIO);
-    topRightSwitch = new DigitalInput(mapTransfer.TOP_RIGHT_SWITCH_DIO);
+    bottomSwitch = new DigitalInput(mapTransfer.BOTTOM_SWITCH_DIO);
+    topSwitch = new DigitalInput(mapTransfer.TOP_SWITCH_DIO);
 
     displayOnDashboard = true;
 
@@ -72,11 +70,11 @@ public class Transfer extends SubsystemBase {
   }
 
   public boolean isTopBallCollected() {
-    return !topLeftSwitch.get() || !topRightSwitch.get();
+    return !topSwitch.get();
   }
 
   public boolean isBottomBallCollected() {
-    return !bottomLeftSwitch.get() || !bottomRightSwitch.get();
+    return !bottomSwitch.get();
   }
 
   public void displayValuesOnDashboard() {
@@ -99,9 +97,9 @@ public class Transfer extends SubsystemBase {
       SmartDashboard.putBoolean("Transfer Is Top Ball Collected", isTopBallCollected());
       SmartDashboard.putBoolean("Transfer Is Bottom Ball Collected", isBottomBallCollected());
 
-      SmartDashboard.putBoolean("Transfer Is Top Left Switch", topLeftSwitch.get());
+      SmartDashboard.putBoolean("Transfer Is Top Left Switch", topSwitch.get());
       SmartDashboard.putBoolean("Transfer Is Top Right Switch", topRightSwitch.get());
-      SmartDashboard.putBoolean("Transfer Is Bottom Left Switch", bottomLeftSwitch.get());
+      SmartDashboard.putBoolean("Transfer Is Bottom Left Switch", bottomSwitch.get());
       SmartDashboard.putBoolean("Transfer Is Bottom Right Switch", bottomRightSwitch.get());
 
     }
