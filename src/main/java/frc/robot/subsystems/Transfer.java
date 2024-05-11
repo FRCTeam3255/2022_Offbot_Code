@@ -8,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.frcteam3255.preferences.SN_DoublePreference;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +20,7 @@ import frc.robot.RobotMap.mapTransfer;
 
 public class Transfer extends SubsystemBase {
 
-  TalonSRX entranceWheel;
+  CANSparkMax entranceWheel;
   TalonSRX bottomBelt;
   TalonSRX topBelt;
 
@@ -30,7 +33,7 @@ public class Transfer extends SubsystemBase {
 
   public Transfer() {
 
-    entranceWheel = new TalonSRX(mapTransfer.ENTRANCE_MOTOR_CAN);
+    entranceWheel = new CANSparkMax(mapTransfer.ENTRANCE_MOTOR_CAN, MotorType.kBrushless);
     bottomBelt = new TalonSRX(mapTransfer.BOTTOM_MOTOR_CAN);
     topBelt = new TalonSRX(mapTransfer.TOP_MOTOR_CAN);
 
@@ -45,11 +48,11 @@ public class Transfer extends SubsystemBase {
   }
 
   public void configure() {
-    entranceWheel.configFactoryDefault();
+    entranceWheel.restoreFactoryDefaults();
     bottomBelt.configFactoryDefault();
     topBelt.configFactoryDefault();
 
-    entranceWheel.setNeutralMode(NeutralMode.Brake);
+    entranceWheel.setIdleMode(IdleMode.kBrake);
     bottomBelt.setNeutralMode(NeutralMode.Brake);
     topBelt.setNeutralMode(NeutralMode.Brake);
 
@@ -65,7 +68,7 @@ public class Transfer extends SubsystemBase {
   }
 
   public void setEntranceWheelSpeed(SN_DoublePreference speed) {
-    entranceWheel.set(ControlMode.PercentOutput, speed.getValue());
+    entranceWheel.set(speed.getValue());
   }
 
   public boolean isTopBallCollected() {
@@ -91,7 +94,7 @@ public class Transfer extends SubsystemBase {
 
       SmartDashboard.putNumber("Transfer Top Belt Speed", topBelt.getMotorOutputPercent());
       SmartDashboard.putNumber("Transfer Bottom Belt Speed", bottomBelt.getMotorOutputPercent());
-      SmartDashboard.putNumber("Transfer Entrance Wheel Speed", entranceWheel.getMotorOutputPercent());
+      SmartDashboard.putNumber("Transfer Entrance Wheel Speed", entranceWheel.getAppliedOutput());
 
       SmartDashboard.putBoolean("Transfer Is Top Ball Collected", isTopBallCollected());
       SmartDashboard.putBoolean("Transfer Is Bottom Ball Collected", isBottomBallCollected());
