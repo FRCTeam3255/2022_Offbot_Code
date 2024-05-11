@@ -10,8 +10,8 @@ public final class RobotMap {
 
     public static final int CLIMBER_MOTOR_CAN = 10;
     public static final int CLIMBER_MINIMUM_SWITCH_DIO = 6;
-    public static final int CLIMBER_MAXIMUM_SWITCH_DIO = 0;
-
+    public static final int CLIMBER_MAXIMUM_SWITCH_DIO = 9;
+    // TODO: Physically Plug in Climber Limit Switch
   }
 
   public static final class mapControllers {
@@ -34,7 +34,7 @@ public final class RobotMap {
 
     public static final int HOOD_MOTOR_CAN = 25;
 
-    public static final int HOOD_BOTTOM_SWITCH_DIO = 5;
+    public static final int HOOD_BOTTOM_SWITCH_DIO = 1;
 
   }
 
@@ -57,10 +57,8 @@ public final class RobotMap {
     public static final int BOTTOM_MOTOR_CAN = 51;
     public static final int TOP_MOTOR_CAN = 52;
 
-    public static final int TOP_LEFT_SWITCH_DIO = 4;
-    public static final int TOP_RIGHT_SWITCH_DIO = 1;
-    public static final int BOTTOM_RIGHT_SWITCH_DIO = 2;
-    public static final int BOTTOM_LEFT_SWITCH_DIO = 3;
+    public static final int TOP_SWITCH_DIO = 2;
+    public static final int BOTTOM_SWITCH_DIO = 0;
 
   }
 

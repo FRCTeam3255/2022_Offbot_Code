@@ -52,7 +52,9 @@ public class Climber extends SubsystemBase {
     if ((isMinSwitch() && speed < 0) || (isMaxSwitch() && speed > 0)) {
       speed = 0;
     }
-    climberMotor.set(speed);
+    // climberMotor.set(speed);
+    // TODO: Climber Functionality
+    climberMotor.set(0);
   }
 
   public double getClimberEncoderCounts() {

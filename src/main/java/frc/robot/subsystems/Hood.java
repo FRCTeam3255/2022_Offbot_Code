@@ -27,8 +27,9 @@ public class Hood extends SubsystemBase {
 
   boolean displayOnDashboard;
 
-  public Hood() {
+  double desiredAngle;
 
+  public Hood() {
     hoodMotor = new CANSparkMax(mapHood.HOOD_MOTOR_CAN, MotorType.kBrushless);
     bottomSwitch = new DigitalInput(mapHood.HOOD_BOTTOM_SWITCH_DIO);
     hoodPIDController = hoodMotor.getPIDController();
@@ -48,19 +49,21 @@ public class Hood extends SubsystemBase {
     hoodMotor.setInverted(constHood.INVERTED);
     hoodMotor.setIdleMode(IdleMode.kBrake);
 
+    hoodMotor.getEncoder().setPositionConversionFactor(360 / constHood.GEAR_RATIO);
+
     hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kForward,
-        (float) ((prefHood.hoodMaxDegrees.getValue() / 360) * constHood.GEAR_RATIO));
+        (float) prefHood.hoodMaxDegrees.getValue());
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kReverse,
-        (float) ((prefHood.hoodMinDegrees.getValue() / 360) * constHood.GEAR_RATIO));
+        (float) prefHood.hoodMinDegrees.getValue());
 
     resetAngleToBottom();
   }
 
   public double getAngleDegrees() {
-    return (hoodMotor.getEncoder().getPosition()) * 360;
+    return (hoodMotor.getEncoder().getPosition());
   }
 
   public double getRawAngle() {
@@ -70,12 +73,16 @@ public class Hood extends SubsystemBase {
   public void setAngle(double a_degrees) {
 
     double degrees = MathUtil.clamp(a_degrees, prefHood.hoodMinDegrees.getValue(), prefHood.hoodMaxDegrees.getValue());
-
-    hoodPIDController.setReference((degrees / 360), CANSparkMax.ControlType.kPosition);
+    desiredAngle = degrees;
+    hoodPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
   }
 
   public void setAngle(SN_DoublePreference degrees) {
     setAngle(degrees.getValue());
+  }
+
+  public void setSpeed(double speed) {
+    hoodMotor.set(speed);
   }
 
   public boolean isBottomSwitch() {
@@ -83,7 +90,7 @@ public class Hood extends SubsystemBase {
   }
 
   public void resetAngleToBottom() {
-    hoodMotor.getEncoder().setPosition((prefHood.hoodMinDegrees.getValue()) / 360);
+    hoodMotor.getEncoder().setPosition(prefHood.hoodMinDegrees.getValue());
   }
 
   public void neutralOutput() {
@@ -104,8 +111,11 @@ public class Hood extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Hood Angle Degrees", getAngleDegrees());
-      SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
-      SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
+
+      // SmartDashboard.putNumber("Hood Desired Angle Degrees", desiredAngle);
+
+      // SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
+      // SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
 
     }
 

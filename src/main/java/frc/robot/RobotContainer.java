@@ -70,7 +70,7 @@ public class RobotContainer {
     subDrivetrain.setDefaultCommand(
         new RunCommand(
             () -> subDrivetrain.arcadeDrive(
-                driveSlewRateLimiter.calculate(conDriver.getArcadeMove()), conDriver.getArcadeRotate()),
+                driveSlewRateLimiter.calculate(conDriver.getArcadeMove()), -conDriver.getArcadeRotate()),
             subDrivetrain));
 
     subClimber.setDefaultCommand(comMoveClimber);
@@ -123,7 +123,7 @@ public class RobotContainer {
     conOperator.btn_RTrig
         .whileTrue(comShootCargo);
 
-    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeedToGoalSpeed(), subShooter));
+    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeed(1), subShooter));
     conOperator.btn_Start.onTrue(new InstantCommand(() -> subShooter.neutralOutput(), subShooter));
 
     // Turret
@@ -133,22 +133,32 @@ public class RobotContainer {
     conOperator.btn_RStick
         .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
 
-    // Intake
+    // Hood
+    conOperator.btn_A.whileTrue(Commands.runOnce(() -> subHood.setSpeed(0.15)))
+        .onFalse(Commands.runOnce(() -> subHood.setSpeed(0)))
+        .onFalse(Commands.runOnce(() -> subHood.setAngle(subHood.getAngleDegrees())));
+    conOperator.btn_Y.whileTrue(Commands.runOnce(() -> subHood.setSpeed(-0.15)))
+        .onFalse(Commands.runOnce(() -> subHood.setSpeed(0)))
+        .onFalse(Commands.runOnce(() -> subHood.setAngle(subHood.getAngleDegrees())));
 
+    // Intake
     conOperator.btn_LTrig.whileTrue(comCollectCargo);
     conOperator.btn_B.whileTrue(comDiscardCargo);
 
     // Presets
     conOperator.POV_North
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetFenderShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetFenderShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetFenderHoodDegrees)));
 
     conOperator.POV_South
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetLaunchpadShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetLaunchpadShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetLaunchpadHoodDegrees)));
 
     conOperator.POV_West
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetTarmacShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetTarmacShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees)));
   }
 

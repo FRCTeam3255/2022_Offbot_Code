@@ -92,12 +92,8 @@ public class CollectCargo extends Command {
       subTransfer.setEntranceWheelSpeed(outputEntrance);
       subTransfer.setBottomBeltSpeed(outputBottom);
       subTransfer.setTopBeltSpeed(outputTop);
-
+      subIntake.setRollerSpeed(outputIntake);
     }
-
-    // intake doesn't affect other commands so it gets set regardless of this
-    // command taking precedence
-    subIntake.setRollerSpeed(outputIntake);
 
   }
 

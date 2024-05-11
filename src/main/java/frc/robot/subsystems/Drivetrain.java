@@ -223,7 +223,6 @@ public class Drivetrain extends SubsystemBase {
       SmartDashboard.putNumber("Drivetrain Right Meters", getRightMeters());
 
       SmartDashboard.putNumber("Drivetrain Heading Degrees", navx.getRotation2d().getDegrees());
-
     }
   }
 }

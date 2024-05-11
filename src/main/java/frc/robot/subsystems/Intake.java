@@ -16,8 +16,8 @@ import frc.robot.RobotMap.mapIntake;
 public class Intake extends SubsystemBase {
 
   TalonSRX roller;
-
   boolean displayOnDashboard;
+  double desiredPercentOutput = 0;
 
   public Intake() {
 
@@ -32,10 +32,10 @@ public class Intake extends SubsystemBase {
     roller.configFactoryDefault();
 
     roller.setInverted(constIntake.ROLLER_INVERTED);
-
   }
 
   public void setRollerSpeed(SN_DoublePreference speed) {
+    desiredPercentOutput = speed.getValue();
     roller.set(ControlMode.PercentOutput, speed.getValue());
   }
 
@@ -49,10 +49,10 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     if (displayOnDashboard) {
-
       SmartDashboard.putNumber("Intake Roller Percent Output", roller.getMotorOutputPercent());
+      SmartDashboard.putNumber("Intake Roller Desired Percent Output", desiredPercentOutput);
+
     }
 
   }
