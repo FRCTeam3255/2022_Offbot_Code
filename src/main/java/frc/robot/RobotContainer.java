@@ -123,7 +123,7 @@ public class RobotContainer {
     conOperator.btn_RTrig
         .whileTrue(comShootCargo);
 
-    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeedToGoalSpeed(), subShooter));
+    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeed(0.5), subShooter));
     conOperator.btn_Start.onTrue(new InstantCommand(() -> subShooter.neutralOutput(), subShooter));
 
     // Turret
@@ -139,15 +139,18 @@ public class RobotContainer {
 
     // Presets
     conOperator.POV_North
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetFenderShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetFenderShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetFenderHoodDegrees)));
 
     conOperator.POV_South
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetLaunchpadShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetLaunchpadShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetLaunchpadHoodDegrees)));
 
     conOperator.POV_West
-        .onTrue(Commands.runOnce(() -> subShooter.setGoalSpeed(prefPreset.presetTarmacShooterSpeed)))
+        // .onTrue(Commands.runOnce(() ->
+        // subShooter.setGoalSpeed(prefPreset.presetTarmacShooterSpeed)))
         .onTrue(Commands.runOnce(() -> subHood.setAngle(prefPreset.presetTarmacHoodDegrees)));
   }
 

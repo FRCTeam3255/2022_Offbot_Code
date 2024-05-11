@@ -55,21 +55,21 @@ public class Shooter extends SubsystemBase {
     leadMotor.set(0);
   }
 
-  public void setGoalSpeed(double goalSpeed) {
-    this.goalSpeed = goalSpeed;
-  }
+  // public void setGoalSpeed(double goalSpeed) {
+  // this.goalSpeed = goalSpeed;
+  // }
 
-  public void setGoalSpeed(SN_DoublePreference goalSpeed) {
-    setGoalSpeed(goalSpeed.getValue());
-  }
+  // public void setGoalSpeed(SN_DoublePreference goalSpeed) {
+  // setGoalSpeed(goalSpeed.getValue());
+  // }
 
-  public double getGoalSpeed() {
-    return goalSpeed;
-  }
+  // public double getGoalSpeed() {
+  // return goalSpeed;
+  // }
 
-  public void setMotorSpeedToGoalSpeed() {
-    setMotorSpeed(getGoalSpeed());
-  }
+  // public void setMotorSpeedToGoalSpeed() {
+  // setMotorSpeed(getGoalSpeed());
+  // }
 
   public void displayValuesOnDashboard() {
     displayOnDashboard = true;
@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Shooter Motor Percent Output", leadMotor.getAppliedOutput());
-      SmartDashboard.putNumber("Shooter Goal Speed", getGoalSpeed());
+      // SmartDashboard.putNumber("Shooter Goal Speed", getGoalSpeed());
 
     }
 
