@@ -161,8 +161,8 @@ public final class RobotPreferences {
 
     public static final SN_DoublePreference turretOpenLoopSpeed = new SN_DoublePreference("turretOpenLoopSpeed",
         0.3);
-    public static final SN_DoublePreference turretMinDegrees = new SN_DoublePreference("turretMinDegrees", -270);
-    public static final SN_DoublePreference turretMaxDegrees = new SN_DoublePreference("turretMaxDegrees", 110);
+    public static final SN_DoublePreference turretMinDegrees = new SN_DoublePreference("turretMinDegrees", 0);
+    public static final SN_DoublePreference turretMaxDegrees = new SN_DoublePreference("turretMaxDegrees", 360);
     public static final SN_DoublePreference turretFacingTowardsIntakeDegrees = new SN_DoublePreference(
         "turretFacingTowardsIntakeDegrees", -90);
     public static final SN_DoublePreference turretFacingAwayFromIntakeDegrees = new SN_DoublePreference(

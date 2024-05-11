@@ -5,12 +5,14 @@
 package frc.robot.subsystems;
 
 import com.frcteam3255.preferences.SN_DoublePreference;
+import com.frcteam3255.utils.SN_Math;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constTurret;
@@ -44,13 +46,15 @@ public class Turret extends SubsystemBase {
 
     turretMotor.setInverted(constTurret.INVERTED);
 
+    turretMotor.getEncoder().setPositionConversionFactor(360 / constTurret.GEAR_RATIO);
+
     turretMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     turretMotor.setSoftLimit(SoftLimitDirection.kForward,
-        (float) ((prefTurret.turretMaxDegrees.getValue() / 360) * constTurret.GEAR_RATIO));
+        (float) prefTurret.turretMaxDegrees.getValue());
 
     turretMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     turretMotor.setSoftLimit(SoftLimitDirection.kReverse,
-        (float) ((prefTurret.turretMinDegrees.getValue() / 360) * constTurret.GEAR_RATIO));
+        (float) prefTurret.turretMinDegrees.getValue());
 
     turretMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -61,8 +65,7 @@ public class Turret extends SubsystemBase {
    * @param degrees Degree count to set turret to
    */
   public void setAngle(double degrees) {
-    turretPIDController.setReference(degrees / 360, CANSparkMax.ControlType.kPosition);
-    // TODO: I don't know if the degrees are still accurate o.O so it might explode
+    turretPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
   }
 
   /**
@@ -80,7 +83,7 @@ public class Turret extends SubsystemBase {
    * @return Turret angle in degrees
    */
   public double getAngleDegrees() {
-    return (turretMotor.getEncoder().getPosition()) * 360;
+    return turretMotor.getEncoder().getPosition();
   }
 
   public double getRawAngle() {
@@ -92,7 +95,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void resetEncoderCounts() {
-    turretMotor.getEncoder().setPosition((prefTurret.turretFacingTowardsIntakeDegrees.getValue()) / 360);
+    turretMotor.getEncoder().setPosition(prefTurret.turretFacingTowardsIntakeDegrees.getValue());
   }
 
   public void displayValuesOnDashboard() {
