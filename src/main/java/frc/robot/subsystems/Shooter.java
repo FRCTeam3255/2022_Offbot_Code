@@ -41,11 +41,10 @@ public class Shooter extends SubsystemBase {
     followMotor.restoreFactoryDefaults();
 
     leadMotor.setInverted(constShooter.LEAD_INVERTED);
-    followMotor.setInverted(constShooter.FOLLOW_INVERTED);
 
     leadMotor.setIdleMode(IdleMode.kCoast);
 
-    followMotor.follow(leadMotor);
+    followMotor.follow(leadMotor, true);
   }
 
   public void setMotorSpeed(double speed) {

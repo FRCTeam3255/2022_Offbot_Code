@@ -73,18 +73,9 @@ public final class RobotPreferences {
   }
 
   public static final class prefHood {
-
-    public static final SN_DoublePreference hoodArbitraryFeedForward = new SN_DoublePreference(
-        "hoodArbitraryFeedForward", 0.040078);
-
-    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 1);
+    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 10);
     public static final SN_DoublePreference hoodI = new SN_DoublePreference("hoodI", 0);
     public static final SN_DoublePreference hoodD = new SN_DoublePreference("hoodD", 0);
-
-    public static final SN_DoublePreference hoodAllowableClosedLoopErrorDegrees = new SN_DoublePreference(
-        "hoodAllowableClosedLoopErrorDegrees", 0.0001);
-    public static final SN_DoublePreference hoodClosedLoopPeakOutput = new SN_DoublePreference(
-        "hoodClosedLoopPeakOutput", .25);
 
     public static final SN_DoublePreference hoodMinDegrees = new SN_DoublePreference("hoodMinDegrees", 4.89);
     public static final SN_DoublePreference hoodMaxDegrees = new SN_DoublePreference("hoodMaxDegrees", 37);

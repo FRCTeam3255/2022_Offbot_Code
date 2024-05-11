@@ -27,8 +27,9 @@ public class Hood extends SubsystemBase {
 
   boolean displayOnDashboard;
 
-  public Hood() {
+  double desiredAngle;
 
+  public Hood() {
     hoodMotor = new CANSparkMax(mapHood.HOOD_MOTOR_CAN, MotorType.kBrushless);
     bottomSwitch = new DigitalInput(mapHood.HOOD_BOTTOM_SWITCH_DIO);
     hoodPIDController = hoodMotor.getPIDController();
@@ -72,7 +73,7 @@ public class Hood extends SubsystemBase {
   public void setAngle(double a_degrees) {
 
     double degrees = MathUtil.clamp(a_degrees, prefHood.hoodMinDegrees.getValue(), prefHood.hoodMaxDegrees.getValue());
-
+    desiredAngle = degrees;
     hoodPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
   }
 
@@ -106,6 +107,8 @@ public class Hood extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Hood Angle Degrees", getAngleDegrees());
+      SmartDashboard.putNumber("Hood Desired Angle Degrees", desiredAngle);
+
       SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
       SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
 
