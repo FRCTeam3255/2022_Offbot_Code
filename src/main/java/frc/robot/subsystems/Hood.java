@@ -48,19 +48,21 @@ public class Hood extends SubsystemBase {
     hoodMotor.setInverted(constHood.INVERTED);
     hoodMotor.setIdleMode(IdleMode.kBrake);
 
+    hoodMotor.getEncoder().setPositionConversionFactor(360 / constHood.GEAR_RATIO);
+
     hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kForward,
-        (float) ((prefHood.hoodMaxDegrees.getValue() / 360) * constHood.GEAR_RATIO));
+        (float) prefHood.hoodMaxDegrees.getValue());
 
     hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     hoodMotor.setSoftLimit(SoftLimitDirection.kReverse,
-        (float) ((prefHood.hoodMinDegrees.getValue() / 360) * constHood.GEAR_RATIO));
+        (float) prefHood.hoodMinDegrees.getValue());
 
     resetAngleToBottom();
   }
 
   public double getAngleDegrees() {
-    return (hoodMotor.getEncoder().getPosition()) * 360;
+    return (hoodMotor.getEncoder().getPosition());
   }
 
   public double getRawAngle() {
@@ -71,7 +73,7 @@ public class Hood extends SubsystemBase {
 
     double degrees = MathUtil.clamp(a_degrees, prefHood.hoodMinDegrees.getValue(), prefHood.hoodMaxDegrees.getValue());
 
-    hoodPIDController.setReference((degrees / 360), CANSparkMax.ControlType.kPosition);
+    hoodPIDController.setReference(degrees, CANSparkMax.ControlType.kPosition);
   }
 
   public void setAngle(SN_DoublePreference degrees) {
@@ -83,7 +85,7 @@ public class Hood extends SubsystemBase {
   }
 
   public void resetAngleToBottom() {
-    hoodMotor.getEncoder().setPosition((prefHood.hoodMinDegrees.getValue()) / 360);
+    hoodMotor.getEncoder().setPosition(prefHood.hoodMinDegrees.getValue());
   }
 
   public void neutralOutput() {
