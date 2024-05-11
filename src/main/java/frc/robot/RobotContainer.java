@@ -123,7 +123,7 @@ public class RobotContainer {
     conOperator.btn_RTrig
         .whileTrue(comShootCargo);
 
-    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeed(0.5), subShooter));
+    conOperator.btn_RBump.onTrue(new RunCommand(() -> subShooter.setMotorSpeed(1), subShooter));
     conOperator.btn_Start.onTrue(new InstantCommand(() -> subShooter.neutralOutput(), subShooter));
 
     // Turret
@@ -132,6 +132,14 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingTowardsIntakeDegrees)));
     conOperator.btn_RStick
         .onTrue(Commands.runOnce(() -> subTurret.setAngle(prefTurret.turretFacingAwayFromIntakeDegrees)));
+
+    // Hood
+    conOperator.btn_A.whileTrue(Commands.runOnce(() -> subHood.setSpeed(0.15)))
+        .onFalse(Commands.runOnce(() -> subHood.setSpeed(0)))
+        .onFalse(Commands.runOnce(() -> subHood.setAngle(subHood.getAngleDegrees())));
+    conOperator.btn_Y.whileTrue(Commands.runOnce(() -> subHood.setSpeed(-0.15)))
+        .onFalse(Commands.runOnce(() -> subHood.setSpeed(0)))
+        .onFalse(Commands.runOnce(() -> subHood.setAngle(subHood.getAngleDegrees())));
 
     // Intake
     conOperator.btn_LTrig.whileTrue(comCollectCargo);

@@ -73,7 +73,7 @@ public final class RobotPreferences {
   }
 
   public static final class prefHood {
-    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 10);
+    public static final SN_DoublePreference hoodP = new SN_DoublePreference("hoodP", 0.05);
     public static final SN_DoublePreference hoodI = new SN_DoublePreference("hoodI", 0);
     public static final SN_DoublePreference hoodD = new SN_DoublePreference("hoodD", 0);
 

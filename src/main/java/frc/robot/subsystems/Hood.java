@@ -81,6 +81,10 @@ public class Hood extends SubsystemBase {
     setAngle(degrees.getValue());
   }
 
+  public void setSpeed(double speed) {
+    hoodMotor.set(speed);
+  }
+
   public boolean isBottomSwitch() {
     return !bottomSwitch.get();
   }
@@ -107,10 +111,11 @@ public class Hood extends SubsystemBase {
     if (displayOnDashboard) {
 
       SmartDashboard.putNumber("Hood Angle Degrees", getAngleDegrees());
-      SmartDashboard.putNumber("Hood Desired Angle Degrees", desiredAngle);
 
-      SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
-      SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
+      // SmartDashboard.putNumber("Hood Desired Angle Degrees", desiredAngle);
+
+      // SmartDashboard.putNumber("Hood Raw Angle", getRawAngle());
+      // SmartDashboard.putBoolean("Hood Is Bottom Switch", isBottomSwitch());
 
     }
 
