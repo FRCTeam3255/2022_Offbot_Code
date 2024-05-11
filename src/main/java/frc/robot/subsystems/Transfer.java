@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constTransfer;
 import frc.robot.RobotMap.mapTransfer;
+import frc.robot.RobotPreferences.prefTransfer;
 
 public class Transfer extends SubsystemBase {
 
@@ -25,9 +26,7 @@ public class Transfer extends SubsystemBase {
   TalonSRX topBelt;
 
   DigitalInput bottomSwitch;
-  DigitalInput bottomRightSwitch;
   DigitalInput topSwitch;
-  DigitalInput topRightSwitch;
 
   boolean displayOnDashboard;
 
@@ -70,11 +69,11 @@ public class Transfer extends SubsystemBase {
   }
 
   public boolean isTopBallCollected() {
-    return !topSwitch.get();
+    return (constTransfer.TOP_LIMIT_SWITCH_INVERT) ? !topSwitch.get() : topSwitch.get();
   }
 
   public boolean isBottomBallCollected() {
-    return !bottomSwitch.get();
+    return (constTransfer.BOTTOM_LIMIT_SWITCH_INVERT) ? !bottomSwitch.get() : bottomSwitch.get();
   }
 
   public void displayValuesOnDashboard() {
@@ -97,11 +96,8 @@ public class Transfer extends SubsystemBase {
       SmartDashboard.putBoolean("Transfer Is Top Ball Collected", isTopBallCollected());
       SmartDashboard.putBoolean("Transfer Is Bottom Ball Collected", isBottomBallCollected());
 
-      SmartDashboard.putBoolean("Transfer Is Top Left Switch", topSwitch.get());
-      SmartDashboard.putBoolean("Transfer Is Top Right Switch", topRightSwitch.get());
-      SmartDashboard.putBoolean("Transfer Is Bottom Left Switch", bottomSwitch.get());
-      SmartDashboard.putBoolean("Transfer Is Bottom Right Switch", bottomRightSwitch.get());
-
+      SmartDashboard.putBoolean("Transfer Top Switch RAW", topSwitch.get());
+      SmartDashboard.putBoolean("Transfer Bottom Switch RAW", bottomSwitch.get());
     }
 
   }

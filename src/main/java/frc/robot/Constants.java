@@ -169,8 +169,10 @@ public final class Constants {
   }
 
   public static final class constTransfer {
-
     public static final boolean ENTRANCE_WHEEL_INVERTED = true;
+
+    public static final boolean BOTTOM_LIMIT_SWITCH_INVERT = true;
+    public static final boolean TOP_LIMIT_SWITCH_INVERT = true;
 
   }
 

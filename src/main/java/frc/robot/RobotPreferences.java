@@ -142,7 +142,6 @@ public final class RobotPreferences {
         "transferBeltSpeed", 0.5);
     public static final SN_DoublePreference transferBeltReverseSpeed = new SN_DoublePreference(
         "transferBeltReverseSpeed", -0.5);
-
   }
 
   public static final class prefTurret {
