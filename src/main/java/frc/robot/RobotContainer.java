@@ -70,7 +70,7 @@ public class RobotContainer {
     subDrivetrain.setDefaultCommand(
         new RunCommand(
             () -> subDrivetrain.arcadeDrive(
-                driveSlewRateLimiter.calculate(conDriver.getArcadeMove()), conDriver.getArcadeRotate()),
+                driveSlewRateLimiter.calculate(conDriver.getArcadeMove()), -conDriver.getArcadeRotate()),
             subDrivetrain));
 
     subClimber.setDefaultCommand(comMoveClimber);
